@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 16 — Observability</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fcf9f2;
+            --border-color: #2c3e50;
+            --k8s-blue: #326ce5;
+            --metric-color: #3b82f6; /* Blue */
+            --log-color: #10b981; /* Green */
+            --trace-color: #f59e0b; /* Amber */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--border-color);
+            line-height: 1.6;
+            padding: 40px 20px;
+            background-image: radial-gradient(#e5e0d8 2px, transparent 2px);
+            background-size: 30px 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .module-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .module-header img {
+            width: 80px;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        .module-header h1 {
+            font-size: 2.8rem;
+            color: var(--k8s-blue);
+            text-shadow: 3px 3px 0px var(--border-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 900;
+        }
+        
+        .module-header p {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #4a5568;
+            background: #fff;
+            display: inline-block;
+            padding: 8px 16px;
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+        }
+
+        /* DIAGRAM CONTAINER */
+        .html-diagram {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 500px;
+            margin: 0 auto 40px auto;
+            background: #fff;
+            border: 4px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 8px 8px 0px var(--border-color);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Elements */
+        .app-pod {
+            position: absolute;
+            top: 50%; left: 100px;
+            transform: translateY(-50%);
+            width: 140px; height: 140px;
+            background: #cbd5e1;
+            border: 4px solid var(--border-color);
+            border-radius: 50%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: 900; z-index: 10;
+        }
+
+        .otel-collector {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 160px; height: 200px;
+            background: #e2e8f0;
+            border: 4px solid var(--border-color);
+            border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            padding-top: 15px; font-weight: 900; font-size: 1.1rem;
+            box-shadow: 6px 6px 0px var(--border-color);
+            z-index: 10;
+        }
+
+        .dashboard {
+            position: absolute;
+            top: 50%; right: 100px;
+            transform: translateY(-50%);
+            width: 180px; height: 180px;
+            background: #1e293b;
+            color: #fff;
+            border: 4px solid var(--border-color);
+            border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            padding-top: 15px; font-weight: 900;
+            box-shadow: 6px 6px 0px var(--border-color);
+            z-index: 10;
+        }
+
+        /* Data Blocks */
+        .data-stream {
+            width: 100%; text-align: center; padding: 10px 0; margin-top: 10px;
+            background: #fff; border: 2px dashed var(--border-color); border-radius: 8px; font-size: 0.8rem; font-weight: 900;
+        }
+
+        .chart-bar {
+            width: 80%; height: 15px; margin: 10px auto; background: #334155; border-radius: 4px; overflow: hidden; display: flex;
+        }
+        .bar-fill { height: 100%; animation: loadBar 2s infinite alternate ease-in-out; }
+        .b1 { width: 70%; background: var(--metric-color); }
+        .b2 { width: 40%; background: var(--log-color); }
+        .b3 { width: 90%; background: var(--trace-color); }
+
+        /* Flow Particles */
+        .particle { position: absolute; width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--border-color); z-index: 15; }
+        .pt-m { background: var(--metric-color); animation: moveRight1 3s infinite linear; }
+        .pt-l { background: var(--log-color); animation: moveRight1 3s infinite linear 1s; }
+        .pt-t { background: var(--trace-color); animation: moveRight1 3s infinite linear 2s; }
+
+        .pt2-m { background: var(--metric-color); animation: moveRight2 3s infinite linear 0.5s; }
+        .pt2-l { background: var(--log-color); animation: moveRight2 3s infinite linear 1.5s; }
+        .pt2-t { background: var(--trace-color); animation: moveRight2 3s infinite linear 2.5s; }
+
+        /* SVG Lines */
+        .lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .flow-line { fill: none; stroke: #94a3b8; stroke-width: 4; stroke-dasharray: 8 8; animation: dashMove 2s linear infinite; }
+
+        @keyframes dashMove { to { stroke-dashoffset: -100; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes moveRight1 { 0% { left: 240px; top: 250px; opacity: 1; } 50% { left: 370px; top: 250px; opacity: 1; } 51% { opacity: 0; } 100% { opacity: 0; } }
+        @keyframes moveRight2 { 0% { left: 530px; top: 250px; opacity: 0; } 50% { left: 530px; top: 250px; opacity: 1; } 100% { left: 720px; top: 250px; opacity: 1; } }
+        @keyframes loadBar { 0% { transform: scaleX(0.5); transform-origin: left; } 100% { transform: scaleX(1); transform-origin: left; } }
+
+        /* INFO CARD GRID */
+        .info-text-grid { display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 40px; }
+        .info-card { background: #fff; border: 3px solid var(--border-color); border-radius: 12px; padding: 25px; box-shadow: 6px 6px 0px var(--border-color); transition: transform 0.2s; }
+        .info-card:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0px var(--border-color); }
+        .info-card h2 { font-size: 1.5rem; margin-bottom: 15px; color: var(--k8s-blue); display: flex; align-items: center; gap: 10px; font-weight: 900; }
+        .info-card h2 span { background: var(--k8s-blue); color: #fff; width: 30px; height: 30px; display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; font-size: 1.1rem; border: 2px solid var(--border-color); }
+        .info-card ul, .info-card ol { padding-left: 20px; }
+        .info-card li { margin-bottom: 12px; font-weight: 600; font-size: 1.05rem; }
+        .info-card li::before { content: "✦ "; color: var(--k8s-blue); font-weight: bold; display: inline-block; margin-left: -20px; width: 20px; }
+        code { background: #f1f5f9; color: #ef4444; padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1; font-family: monospace; font-weight: bold; }
+        .footer-signature { text-align: center; margin-top: 60px; font-weight: 800; color: #64748b; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="module-header">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg" alt="K8s Logo">
+        <h1>Module 16: Observability</h1>
+        <p>Metrics, Logs & Traces (Anas's Stack)</p>
+    </div>
+
+    <!-- DIAGRAM CONTAINER -->
+    <div class="html-diagram">
+        
+        <svg class="lines" viewBox="0 0 900 500">
+            <!-- App to Collector -->
+            <path class="flow-line" d="M 240 250 L 370 250" />
+            <!-- Collector to Dashboard -->
+            <path class="flow-line" d="M 530 250 L 720 250" />
+        </svg>
+
+        <div class="particle pt-m"></div>
+        <div class="particle pt-l"></div>
+        <div class="particle pt-t"></div>
+
+        <div class="particle pt2-m"></div>
+        <div class="particle pt2-l"></div>
+        <div class="particle pt2-t"></div>
+
+        <div class="app-pod">
+            App Pod<br>
+            <span style="font-size:0.7rem;">(Emitting Data)</span>
+        </div>
+
+        <div class="otel-collector">
+            OTel Collector
+            <div class="data-stream" style="color: var(--metric-color);">Metrics (CPU/RAM)</div>
+            <div class="data-stream" style="color: var(--log-color);">Logs (Text)</div>
+            <div class="data-stream" style="color: var(--trace-color);">Traces (Time)</div>
+        </div>
+
+        <div class="dashboard">
+            SigNoz / Netdata
+            <div class="chart-bar"><div class="bar-fill b1"></div></div>
+            <div class="chart-bar"><div class="bar-fill b2"></div></div>
+            <div class="chart-bar"><div class="bar-fill b3"></div></div>
+        </div>
+
+    </div>
+
+    <!-- INFO CARD GRID -->
+    <div class="info-text-grid">
+        
+        <!-- Concept -->
+        <div class="info-card">
+            <h2><span>1</span> Core Concepts (Anas's Stack)</h2>
+            <ul>
+                <li><strong>No Prometheus/Grafana:</strong> Hum modern stack use karenge!</li>
+                <li><strong>Three Pillars:</strong> Observability 3 cheezon par mabni hai: <strong>Metrics</strong> (Numbers, CPU/RAM), <strong>Logs</strong> (Text, Errors), aur <strong>Traces</strong> (Request kahan kahan gayi aur kitna time liya).</li>
+                <li><strong>OpenTelemetry (OTel):</strong> Yeh ek standard pipeline (Collector) hai jo app se data le kar kisi bhi dashboard ko bhej sakti hai. (Vendor-neutral).</li>
+                <li><strong>Dashboards:</strong> Hum <strong>SigNoz</strong> ya <strong>Netdata</strong> use karenge jo modern aur fast hain, aur <strong>Coroot</strong> (eBPF based) jo automatically service map bana deta hai.</li>
+            </ul>
+        </div>
+
+        <!-- Hands-on -->
+        <div class="info-card">
+            <h2><span>2</span> Hands-on Steps</h2>
+            <ol>
+                <li>Cluster mein <strong>Netdata</strong> ya <strong>SigNoz</strong> deploy karein.</li>
+                <li>Ek simple app (e.g. Node.js) ko OpenTelemetry (OTel) ke sath instrument karein taake wo traces generate kare.</li>
+                <li>Dashboard mein ja kar "Golden Signals" check karein: Latency (speed), Traffic (requests), Errors, aur Saturation (CPU full).</li>
+                <li>Native tools use karein: <code>kubectl top nodes</code>, <code>kubectl logs</code>, <code>kubectl get events</code>.</li>
+                <li>Debugging ke liye <strong>Ephemeral Containers</strong> use karein: <code>kubectl debug -it pod/my-app --image=busybox</code> (App pod ke andar ghus kar usko debug karna bina pod restart kiye).</li>
+            </ol>
+        </div>
+
+        <!-- Best Practices -->
+        <div class="info-card">
+            <h2><span>3</span> Best Practices (Pro Tips)</h2>
+            <ul>
+                <li>Hamesha <strong>Structured Logs (JSON format)</strong> use karein taake search karna asaan ho.</li>
+                <li>OpenTelemetry ko as a standard apnayen, is se aap kabhi kisi ek tool (vendor) ke mohtaj nahi rahenge.</li>
+                <li><strong>Alert on Symptoms, not causes:</strong> Alert tab aana chahiye jab "User ka login fail ho raha hai" (Symptom), na ke tab jab "CPU 80% hai" (Cause).</li>
+            </ul>
+        </div>
+
+        <!-- Done Check -->
+        <div class="info-card">
+            <h2><span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: -4px;"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Done-Check</h2>
+            <ul>
+                <li>Aapka live dashboard (SigNoz/Netdata) chal raha hai, aur aap ek request ki complete trace end-to-end dekh sakte hain!</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="footer-signature">
+        <svg style="vertical-align: middle; margin-right: 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Anas Khan | 
+        <svg style="vertical-align: middle; margin: 0 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> anas.devops@hotmail.com | 
+        <svg style="vertical-align: middle; margin: 0 5px;" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg> devanaskhanops
+    </div>
+
+</div>
+
+</body>
+</html>
