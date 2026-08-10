@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 21 — Rancher</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fcf9f2;
+            --border-color: #2c3e50;
+            --k8s-blue: #326ce5;
+            --rancher-blue: #0075a8; /* Rancher Blue */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--border-color);
+            line-height: 1.6;
+            padding: 40px 20px;
+            background-image: radial-gradient(#e5e0d8 2px, transparent 2px);
+            background-size: 30px 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .module-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .module-header img {
+            width: 80px;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        .module-header h1 {
+            font-size: 2.8rem;
+            color: var(--k8s-blue);
+            text-shadow: 3px 3px 0px var(--border-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 900;
+        }
+        
+        .module-header p {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #4a5568;
+            background: #fff;
+            display: inline-block;
+            padding: 8px 16px;
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+        }
+
+        /* DIAGRAM CONTAINER */
+        .html-diagram {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 500px;
+            margin: 0 auto 40px auto;
+            background: #fff;
+            border: 4px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 8px 8px 0px var(--border-color);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Elements */
+        .control-tower {
+            position: absolute;
+            top: 50%; left: 100px;
+            transform: translateY(-50%);
+            width: 160px; height: 180px;
+            background: #e0f2fe;
+            border: 4px solid var(--rancher-blue);
+            border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            padding-top: 15px; font-weight: 900;
+            box-shadow: 6px 6px 0px var(--border-color);
+            z-index: 10;
+        }
+
+        .ui-dash {
+            width: 80%; height: 60px;
+            background: #fff; border: 2px solid var(--border-color);
+            border-radius: 6px; margin-top: 15px;
+            display: flex; flex-wrap: wrap; padding: 5px; gap: 4px;
+        }
+
+        .ui-box { width: 30%; height: 20px; background: #94a3b8; border-radius: 2px; }
+
+        .cluster {
+            position: absolute;
+            width: 140px; height: 120px;
+            background: #f1f5f9;
+            border: 4px solid var(--border-color);
+            border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 1.1rem;
+            box-shadow: 6px 6px 0px var(--border-color);
+            z-index: 10;
+        }
+
+        .c-local { top: 70px; right: 150px; }
+        .c-aws { top: 200px; right: 150px; }
+        .c-gcp { top: 330px; right: 150px; }
+
+        /* SVG Lines */
+        .lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .flow-line { fill: none; stroke: var(--rancher-blue); stroke-width: 4; stroke-dasharray: 8 8; animation: dashMove 2s linear infinite; }
+
+        @keyframes dashMove { to { stroke-dashoffset: -100; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* INFO CARD GRID */
+        .info-text-grid { display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 40px; }
+        .info-card { background: #fff; border: 3px solid var(--border-color); border-radius: 12px; padding: 25px; box-shadow: 6px 6px 0px var(--border-color); transition: transform 0.2s; }
+        .info-card:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0px var(--border-color); }
+        .info-card h2 { font-size: 1.5rem; margin-bottom: 15px; color: var(--k8s-blue); display: flex; align-items: center; gap: 10px; font-weight: 900; }
+        .info-card h2 span { background: var(--k8s-blue); color: #fff; width: 30px; height: 30px; display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; font-size: 1.1rem; border: 2px solid var(--border-color); }
+        .info-card ul, .info-card ol { padding-left: 20px; }
+        .info-card li { margin-bottom: 12px; font-weight: 600; font-size: 1.05rem; }
+        .info-card li::before { content: "✦ "; color: var(--k8s-blue); font-weight: bold; display: inline-block; margin-left: -20px; width: 20px; }
+        code { background: #f1f5f9; color: #ef4444; padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1; font-family: monospace; font-weight: bold; }
+        .footer-signature { text-align: center; margin-top: 60px; font-weight: 800; color: #64748b; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="module-header">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg" alt="K8s Logo">
+        <h1>Module 21: Rancher</h1>
+        <p>Multi-Cluster Management UI</p>
+    </div>
+
+    <!-- DIAGRAM CONTAINER -->
+    <div class="html-diagram">
+        
+        <svg class="lines" viewBox="0 0 900 500">
+            <!-- Tower to Local -->
+            <path class="flow-line" d="M 260 250 Q 400 130 600 130" />
+            <!-- Tower to AWS -->
+            <path class="flow-line" d="M 260 250 L 600 250" />
+            <!-- Tower to GCP -->
+            <path class="flow-line" d="M 260 250 Q 400 390 600 390" />
+        </svg>
+
+        <div class="control-tower">
+            Rancher UI<br>
+            <span style="font-size:0.7rem;">(Control Tower)</span>
+            <div class="ui-dash">
+                <div class="ui-box"></div><div class="ui-box"></div><div class="ui-box"></div>
+                <div class="ui-box"></div><div class="ui-box"></div><div class="ui-box"></div>
+            </div>
+        </div>
+
+        <div class="cluster c-local">Local Kubeadm<br>Cluster</div>
+        <div class="cluster c-aws">AWS EKS<br>Cluster</div>
+        <div class="cluster c-gcp">GCP GKE<br>Cluster</div>
+
+    </div>
+
+    <!-- INFO CARD GRID -->
+    <div class="info-text-grid">
+        
+        <!-- Analogy -->
+        <div class="info-card">
+            <h2><span>1</span> Analogy (Samajhne ke liye)</h2>
+            <p><strong>Rancher:</strong> Ek "Control Tower" hai jahan aap baith kar apne saare airports (clusters) ko ek hi screen par dekh sakte hain. Chahe wo cluster AWS mein ho, Google Cloud mein ho, ya aapke apne laptop par.</p>
+        </div>
+
+        <!-- Concept -->
+        <div class="info-card">
+            <h2><span>2</span> Core Concepts</h2>
+            <ul>
+                <li><strong>Centralized Management:</strong> Ek jagah se tamam clusters, unki apps, aur unke users (RBAC) ko manage kiya ja sakta hai.</li>
+                <li><strong>App Catalog:</strong> Rancher ke paas apna app store hota hai jahan se Helm charts bas ek click mein deploy ho jate hain.</li>
+                <li><strong>Memory-heavy:</strong> Rancher boht powerful hai, is liye ise chalane ke liye system mein achi khasi RAM honi chahiye (Yahi waja hai ke Anas ki VM 32GB ki hai!).</li>
+            </ul>
+        </div>
+
+        <!-- Hands-on -->
+        <div class="info-card">
+            <h2><span>3</span> Hands-on Steps</h2>
+            <ol>
+                <li>Apne cluster mein Rancher install karein (via Helm).</li>
+                <li>Rancher UI ko browser mein access karein aur admin setup karein.</li>
+                <li>Apne <code>kubeadm</code> wale cluster ko Rancher ke andar "Import" karein taake wo UI par nazar aaye.</li>
+                <li>Rancher ke App Catalog se koi bhi app (e.g. Redis ya WordPress) deploy karein.</li>
+                <li>Rancher UI se pods, nodes, aur RBAC policies check karein.</li>
+            </ol>
+        </div>
+
+        <!-- Best Practices -->
+        <div class="info-card">
+            <h2><span>4</span> Best Practices (Pro Tips)</h2>
+            <ul>
+                <li>Rancher ko <strong>Visibility aur Governance</strong> ke liye use karein.</li>
+                <li>Koshish karein ke apps deploy karne ke liye Rancher UI ("Click-ops") ki bajaye GitOps (ArgoCD) hi use karein, taake history Git mein mehfooz rahe.</li>
+                <li>Resource constraints se bachne ke liye Rancher ko lab ke aakhir mein install karein.</li>
+            </ul>
+        </div>
+
+        <!-- Done Check -->
+        <div class="info-card">
+            <h2><span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: -4px;"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Done-Check</h2>
+            <ul>
+                <li>Aapne Rancher UI successfully load kar liya aur apne cluster ko uske andar manage/view kar rahe hain!</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="footer-signature">
+        <svg style="vertical-align: middle; margin-right: 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Anas Khan | 
+        <svg style="vertical-align: middle; margin: 0 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> anas.devops@hotmail.com | 
+        <svg style="vertical-align: middle; margin: 0 5px;" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg> devanaskhanops
+    </div>
+
+</div>
+
+</body>
+</html>
