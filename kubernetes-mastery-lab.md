@@ -174,6 +174,60 @@ Anas uses **GitLab Container Registry** strictly as a **Docker image registry** 
   ```
 - **Security:** always use a scoped GitLab token (Deploy Token with `read_registry`/`write_registry`), never the account password; never commit the token into Git manifests — it lives in the Secret only.
 
+### 0.11 — Per-topic completion: write a notes file + push to Git
+Every time a topic/module is **finished** (e.g. Volumes done), the AI MUST produce a complete notes file for that topic and commit+push it. This builds Anas a permanent, revisable study library.
+
+**When:** the moment a module/topic is completed and Anas has approved it as done.
+
+**Where:** in a `notes/` folder in the repo, named `notes/<module-number>-<topic>.md` (e.g. `notes/09-volumes.md`, `notes/06-scheduling-affinity-taints.md`).
+
+**Language — BOTH, in this order, in the same file:**
+1. **Roman Urdu** — the full learning explanation (how Anas actually studies): analogy → concept → commands → Case/Action table.
+2. **Interview / Speaking (easy English)** — a separate section at the bottom for interview + speaking practice: simple, clear English he can say out loud, ending with a Case → Action table.
+
+**Every notes file MUST follow this template:**
+```markdown
+# <Topic Name>  (Module X)
+> Status: COMPLETE | Date: YYYY-MM-DD | Verified against: <k8s vX.Y, Aug 2026>
+
+## 🟢 Roman Urdu (seekhne ke liye)
+### Analogy
+<simple real-world analogy>
+### Concept
+<what it is, why it exists, key parts — Roman Urdu>
+### Commands (jo humne chalaye)
+```bash
+# har command ke upar # comment
+<commands>
+```
+### Case → Action
+| Case | Action |
+|---|---|
+| ... | ... |
+### Common errors (jo humne dekhe/fix kiye)
+<error → fix>
+
+## 🔵 Interview / Speaking (easy English)
+<3-6 short, clear sentences explaining the topic the way you'd say it in an interview. Simple words, no jargon dumps.>
+### Likely interview questions + short answers
+- Q: ...  A: ...
+- Q: ...  A: ...
+### Case → Action (English)
+| Case | Action |
+|---|---|
+| ... | ... |
+```
+
+**Then push (teach Anas the git flow each time):**
+```bash
+# from the repo root
+git add notes/<module-number>-<topic>.md
+git commit -m "notes: complete <topic> (Module X)"
+git push
+```
+
+**Also:** after writing + pushing the notes file, log it in `PROGRESS.md` (which topic's notes were pushed, and the commit). No topic is "done" until its notes file exists, is pushed, and is logged.
+
 ---
 
 ## 🗺️ CURRICULUM MAP (learning order)
@@ -191,6 +245,7 @@ Anas uses **GitLab Container Registry** strictly as a **Docker image registry** 
 | **I. Wrap** | 24 | Best-practices + interview prep |
 
 Each module below has: **Analogy · Concept · Hands-on · Errors to break+fix · Best practice · Done-check.**
+> On completion of each module, produce its notes file and push it per **Section 0.11** (Roman Urdu + easy-English interview section). A module isn't "done" until its notes are written, pushed, and logged.
 
 > ### ⚠️ STRICT ORDER — do modules in sequence, no jumping ahead
 > The order is deliberately built so each module only uses concepts already taught. **Do NOT teach a later module before the earlier ones are done and approved.** Every module assumes the previous ones are complete (verify via `PROGRESS.md`).
