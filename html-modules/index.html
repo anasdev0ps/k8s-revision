@@ -4,17 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kubernetes Mastery Lab</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-base: #000000;
-            --card-bg: #0a0a0a;
-            --card-hover: #111111;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(255, 255, 255, 0.2);
-            --text-main: #ededed;
-            --text-muted: #a1a1aa;
-            --accent: #326CE5;
+            --bg-color: #fcf9f2;
+            --text-main: #2c3e50;
+            --border-color: #2c3e50;
         }
 
         * {
@@ -24,18 +19,14 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background-color: var(--bg-base);
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
             color: var(--text-main);
             min-height: 100vh;
-            line-height: 1.5;
-            /* Sleek developer grid background */
-            background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-            background-position: center top;
-            padding: 80px 20px;
+            padding: 60px 20px;
+            /* Fun polka dot background */
+            background-image: radial-gradient(#e5e0d8 2px, transparent 2px);
+            background-size: 30px 30px;
         }
 
         .container {
@@ -46,179 +37,170 @@
         /* Hero Section */
         .hero {
             text-align: center;
-            margin-bottom: 80px;
-            animation: fadeUp 0.8s ease-out forwards;
+            margin-bottom: 60px;
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
-        .hero-badge {
-            display: inline-block;
-            background: rgba(50, 108, 229, 0.1);
-            color: #60a5fa;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            border: 1px solid rgba(50, 108, 229, 0.2);
-            margin-bottom: 24px;
-            letter-spacing: 0.5px;
+        .hero img {
+            width: 100px;
+            margin-bottom: 15px;
+            animation: bounceLogo 3s infinite ease-in-out;
+        }
+
+        @keyframes bounceLogo {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
         }
 
         .hero h1 {
-            font-size: 4rem;
-            font-weight: 700;
-            letter-spacing: -0.04em;
-            margin-bottom: 20px;
-            line-height: 1.1;
-            background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #326CE5;
+            text-shadow: 4px 4px 0px #2c3e50;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
         .hero p {
-            font-size: 1.25rem;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto;
-            font-weight: 400;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #555;
+            background: #fff;
+            display: inline-block;
+            padding: 10px 20px;
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.1);
         }
 
         /* Grid Layout */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 24px;
+            gap: 30px;
         }
 
-        /* Premium Cards */
+        /* Cartoonish Neo-Brutalism Cards */
         .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
+            background: #ffffff;
+            border: 4px solid var(--border-color);
             border-radius: 16px;
-            padding: 32px;
+            padding: 25px;
             text-decoration: none;
-            color: inherit;
+            color: var(--text-main);
             display: flex;
             flex-direction: column;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease-in-out;
+            box-shadow: 8px 8px 0px var(--border-color);
             position: relative;
-            overflow: hidden;
-            opacity: 0;
-            animation: fadeUp 0.8s ease-out forwards;
+            transform: translateY(0);
         }
 
-        .card:nth-child(1) { animation-delay: 0.1s; }
-        .card:nth-child(2) { animation-delay: 0.2s; }
-        .card:nth-child(3) { animation-delay: 0.3s; }
-        .card:nth-child(4) { animation-delay: 0.4s; }
-        .card:nth-child(5) { animation-delay: 0.5s; }
-        .card:nth-child(6) { animation-delay: 0.6s; }
-
-        /* Subtle top glow line */
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+        /* Different fun hover colors for each card */
+        .card:nth-child(1):hover { background: #fef08a; } /* Yellow */
+        .card:nth-child(2):hover { background: #bbf7d0; } /* Green */
+        .card:nth-child(3):hover { background: #bfdbfe; } /* Blue */
+        .card:nth-child(4):hover { background: #fbcfe8; } /* Pink */
+        .card:nth-child(5):hover { background: #fed7aa; } /* Orange */
 
         .card:hover {
-            background: var(--card-hover);
-            border-color: var(--border-hover);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
-        }
-
-        .card:hover::before {
-            opacity: 1;
+            transform: translate(4px, 4px);
+            box-shadow: 4px 4px 0px var(--border-color);
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .module-num {
-            font-family: monospace;
-            font-size: 0.875rem;
-            color: #60a5fa;
-            background: rgba(96, 165, 250, 0.1);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-weight: 600;
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: #fff;
+            background: #ef4444;
+            padding: 5px 12px;
+            border-radius: 8px;
+            border: 3px solid var(--border-color);
+            box-shadow: 3px 3px 0px var(--border-color);
+            text-transform: uppercase;
         }
 
         .card h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--text-main);
-            letter-spacing: -0.02em;
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 10px;
         }
 
         .card p {
-            color: var(--text-muted);
-            font-size: 1rem;
-            line-height: 1.6;
+            font-size: 1.1rem;
+            font-weight: 600;
+            line-height: 1.5;
+            color: #4a5568;
             flex-grow: 1;
         }
 
         .card-footer {
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 3px dashed var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            font-weight: 500;
+            font-weight: 800;
+            font-size: 1rem;
         }
 
         .arrow {
-            transition: transform 0.3s ease;
-            color: #60a5fa;
+            font-size: 1.3rem;
+            transition: transform 0.2s;
         }
         .card:hover .arrow {
-            transform: translateX(4px);
+            transform: translateX(8px);
         }
 
         /* Locked Card */
         .card-locked {
+            background: #e2e8f0;
             border-style: dashed;
-            opacity: 0.6;
             cursor: not-allowed;
+            box-shadow: 4px 4px 0px #94a3b8;
+            border-color: #94a3b8;
+            color: #64748b;
         }
         .card-locked:hover {
             transform: none;
-            background: var(--card-bg);
-            border-color: var(--border-color);
-            box-shadow: none;
+            box-shadow: 4px 4px 0px #94a3b8;
+            background: #e2e8f0;
         }
-        .card-locked::before {
-            display: none;
+        .card-locked .module-num {
+            background: #94a3b8;
+            border-color: #64748b;
+            box-shadow: 3px 3px 0px #64748b;
         }
+        .card-locked p { color: #94a3b8; }
+        .card-locked .card-footer { border-color: #cbd5e1; }
 
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
         .footer {
-            margin-top: 100px;
+            margin-top: 60px;
             text-align: center;
-            color: var(--text-muted);
-            font-size: 0.875rem;
-            padding-top: 40px;
-            border-top: 1px solid var(--border-color);
-        }
-        .footer span {
-            color: var(--text-main);
-            font-weight: 500;
+            font-weight: 800;
+            font-size: 1.1rem;
+            padding: 20px;
+            background: #fff;
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 6px 6px 0px var(--border-color);
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
         }
     </style>
 </head>
@@ -228,9 +210,9 @@
         
         <!-- Hero Section -->
         <div class="hero">
-            <div class="hero-badge">Kubernetes v1.35</div>
-            <h1>Mastery Lab</h1>
-            <p>A completely visual, step-by-step curriculum to master Kubernetes. Built by Anas Khan.</p>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg" alt="Kubernetes">
+            <h1>Kubernetes Mastery</h1>
+            <p>Visual, Animated, and Interactive Learning! 🚀</p>
         </div>
 
         <!-- Modules Grid -->
@@ -238,71 +220,71 @@
             
             <a href="module-0/module-0.html" class="card">
                 <div class="card-header">
-                    <span class="module-num">M0</span>
+                    <span class="module-num" style="background:#3b82f6;">M0</span>
                 </div>
                 <h3>Cluster Setup</h3>
                 <p>Environment & multi-node cluster architecture using kubeadm, VMs, and control-plane.</p>
                 <div class="card-footer">
-                    <span>View Module</span>
-                    <span class="arrow">→</span>
+                    <span>Let's Go!</span>
+                    <span class="arrow">➜</span>
                 </div>
             </a>
 
             <a href="module-1/module-1.html" class="card">
                 <div class="card-header">
-                    <span class="module-num">M1</span>
+                    <span class="module-num" style="background:#f59e0b;">M1</span>
                 </div>
                 <h3>Pods & Deployments</h3>
                 <p>Master the fundamental units. Understand how Deployments manage ReplicaSets with zero downtime.</p>
                 <div class="card-footer">
-                    <span>View Module</span>
-                    <span class="arrow">→</span>
+                    <span>Let's Go!</span>
+                    <span class="arrow">➜</span>
                 </div>
             </a>
 
             <a href="module-2/module-2.html" class="card">
                 <div class="card-header">
-                    <span class="module-num">M2</span>
+                    <span class="module-num" style="background:#10b981;">M2</span>
                 </div>
                 <h3>Services & Networking</h3>
                 <p>Discover how traffic routes via ClusterIP and NodePort. Visualize kube-proxy and Endpoints.</p>
                 <div class="card-footer">
-                    <span>View Module</span>
-                    <span class="arrow">→</span>
+                    <span>Let's Go!</span>
+                    <span class="arrow">➜</span>
                 </div>
             </a>
 
             <a href="module-3/module-3.html" class="card">
                 <div class="card-header">
-                    <span class="module-num">M3</span>
+                    <span class="module-num" style="background:#8b5cf6;">M3</span>
                 </div>
                 <h3>Namespaces & Labels</h3>
                 <p>Isolate environments. See exactly how Labels filter traffic and Annotations provide metadata.</p>
                 <div class="card-footer">
-                    <span>View Module</span>
-                    <span class="arrow">→</span>
+                    <span>Let's Go!</span>
+                    <span class="arrow">➜</span>
                 </div>
             </a>
 
             <a href="module-4/module-4.html" class="card">
                 <div class="card-header">
-                    <span class="module-num">M4</span>
+                    <span class="module-num" style="background:#ec4899;">M4</span>
                 </div>
                 <h3>ConfigMaps & Secrets</h3>
                 <p>Inject environment variables and securely mount Base64 encoded private passwords into Pods.</p>
                 <div class="card-footer">
-                    <span>View Module</span>
-                    <span class="arrow">→</span>
+                    <span>Let's Go!</span>
+                    <span class="arrow">➜</span>
                 </div>
             </a>
 
             <div class="card card-locked">
                 <div class="card-header">
-                    <span class="module-num" style="background: #27272a; color: #71717a;">M5</span>
+                    <span class="module-num">M5</span>
                 </div>
                 <h3>Health Probes</h3>
-                <p>Liveness, Readiness, and Startup probes. (Module is currently under construction).</p>
-                <div class="card-footer" style="color: #52525b;">
+                <p>Liveness, Readiness, and Startup probes. (Pending AI Generation...)</p>
+                <div class="card-footer">
                     <span>Locked</span>
                     <span>🔒</span>
                 </div>
@@ -311,7 +293,7 @@
         </div>
 
         <div class="footer">
-            Designed by <span>Anas Khan</span> | 2026
+            Made with fun by Anas Khan &copy; 2026
         </div>
 
     </div>

@@ -13,9 +13,10 @@ These rules MUST be followed strictly for all remaining Kubernetes modules (Modu
 - **Tone:** Conversational, easy to understand, well-explained for mastery.
 - **NO EMOJIS:** Do not use any emojis in the text, HTML, or images.
 
-## 2. HTML Layout & CSS
-- **Style:** Clean, professional paper background (`#fcf9f2`), centralized white container with soft box shadow.
-- **Typography:** `Georgia`, serif. Clean headers with `#2c3e50` and `#4a6fa5` colors.
+## 2. HTML Layout & CSS (Cartoonish Style)
+- **Style:** Clean paper background (`#fcf9f2`). Pura dashboard aur tamam modules ek hi **"Cartoonish" (Playful/Neo-brutalism)** style mein hone chahiye (maslan thick borders, solid drop shadows, soft rounded shapes).
+- **Logos:** Style cartoonish hoga lekin **LOGOS HAMESHA REAL AUR OFFICIAL HONGEY** (e.g., Kubernetes, Docker ke original logos).
+- **Typography:** `Georgia` ya koi soft rounded font. Clean headers with `#2c3e50` and `#4a6fa5` colors.
 
 ## 3. Required Sections
 Every module must exactly follow this structure:
