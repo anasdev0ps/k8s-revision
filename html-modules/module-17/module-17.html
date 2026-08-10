@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 17 — Error Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fcf9f2;
+            --border-color: #2c3e50;
+            --k8s-blue: #326ce5;
+            --error-color: #ef4444; /* Red */
+            --fix-color: #10b981; /* Green */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--border-color);
+            line-height: 1.6;
+            padding: 40px 20px;
+            background-image: radial-gradient(#e5e0d8 2px, transparent 2px);
+            background-size: 30px 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .module-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .module-header img {
+            width: 80px;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        .module-header h1 {
+            font-size: 2.8rem;
+            color: var(--k8s-blue);
+            text-shadow: 3px 3px 0px var(--border-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 900;
+        }
+        
+        .module-header p {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #4a5568;
+            background: #fff;
+            display: inline-block;
+            padding: 8px 16px;
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+        }
+
+        /* DIAGRAM CONTAINER */
+        .html-diagram {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 500px;
+            margin: 0 auto 40px auto;
+            background: #fff;
+            border: 4px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 8px 8px 0px var(--border-color);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Elements */
+        .broken-pod {
+            position: absolute;
+            top: 50%; left: 150px;
+            transform: translateY(-50%);
+            width: 160px; height: 160px;
+            background: #fca5a5;
+            border: 4px dashed var(--error-color);
+            border-radius: 50%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: 900; z-index: 10;
+            animation: shake 0.5s infinite;
+        }
+
+        .error-tag {
+            background: #fff;
+            color: var(--error-color);
+            border: 2px solid var(--error-color);
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            margin: 2px;
+            font-weight: 900;
+        }
+
+        .diagnostics {
+            position: absolute;
+            top: 50%; right: 150px;
+            transform: translateY(-50%);
+            width: 250px; height: 280px;
+            background: #1e293b;
+            color: #fff;
+            border: 4px solid var(--border-color);
+            border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            padding: 15px; font-weight: 900;
+            box-shadow: 6px 6px 0px var(--border-color);
+            z-index: 10;
+        }
+
+        .terminal-cmd {
+            width: 100%;
+            background: #000;
+            color: #10b981;
+            padding: 8px;
+            margin: 5px 0;
+            font-family: monospace;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            text-align: left;
+        }
+
+        .terminal-cmd::before {
+            content: "$ ";
+            color: #fff;
+        }
+
+        /* SVG Lines */
+        .lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .flow-line { fill: none; stroke: var(--border-color); stroke-width: 4; stroke-dasharray: 8 8; animation: dashMoveReverse 2s linear infinite; }
+
+        @keyframes dashMoveReverse { to { stroke-dashoffset: 100; } }
+        @keyframes shake { 0% { transform: translateY(-50%) rotate(0deg); } 25% { transform: translateY(-50%) rotate(-5deg); } 50% { transform: translateY(-50%) rotate(0deg); } 75% { transform: translateY(-50%) rotate(5deg); } 100% { transform: translateY(-50%) rotate(0deg); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* INFO CARD GRID */
+        .info-text-grid { display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 40px; }
+        .info-card { background: #fff; border: 3px solid var(--border-color); border-radius: 12px; padding: 25px; box-shadow: 6px 6px 0px var(--border-color); transition: transform 0.2s; }
+        .info-card:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0px var(--border-color); }
+        .info-card h2 { font-size: 1.5rem; margin-bottom: 15px; color: var(--k8s-blue); display: flex; align-items: center; gap: 10px; font-weight: 900; }
+        .info-card h2 span { background: var(--k8s-blue); color: #fff; width: 30px; height: 30px; display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; font-size: 1.1rem; border: 2px solid var(--border-color); }
+        .info-card ul, .info-card ol { padding-left: 20px; }
+        .info-card li { margin-bottom: 12px; font-weight: 600; font-size: 1.05rem; }
+        .info-card li::before { content: "✦ "; color: var(--k8s-blue); font-weight: bold; display: inline-block; margin-left: -20px; width: 20px; }
+        code { background: #f1f5f9; color: #ef4444; padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1; font-family: monospace; font-weight: bold; }
+        
+        .error-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .error-table th, .error-table td { border: 2px solid var(--border-color); padding: 10px; text-align: left; }
+        .error-table th { background: #e2e8f0; font-weight: 900; }
+        .error-table td { font-weight: 600; }
+        .error-table tr:nth-child(even) { background: #f8fafc; }
+
+        .footer-signature { text-align: center; margin-top: 60px; font-weight: 800; color: #64748b; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="module-header">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg" alt="K8s Logo">
+        <h1>Module 17: Error Lab</h1>
+        <p>Break Everything on Purpose!</p>
+    </div>
+
+    <!-- DIAGRAM CONTAINER -->
+    <div class="html-diagram">
+        
+        <svg class="lines" viewBox="0 0 900 500">
+            <!-- Diagnostics inspecting the Pod -->
+            <path class="flow-line" d="M 520 250 L 310 250" />
+            <circle cx="310" cy="250" r="8" fill="var(--border-color)" />
+        </svg>
+
+        <div class="broken-pod">
+            <span style="font-size:2rem;">💥</span>
+            Pod
+            <div class="error-tag">CrashLoopBackOff</div>
+            <div class="error-tag">OOMKilled</div>
+            <div class="error-tag">Pending</div>
+        </div>
+
+        <div class="diagnostics">
+            Triage Order
+            <div class="terminal-cmd">kubectl get pods</div>
+            <div class="terminal-cmd">kubectl describe pod</div>
+            <div class="terminal-cmd">kubectl logs -p</div>
+            <div class="terminal-cmd">kubectl get events</div>
+            <div class="terminal-cmd">kubectl get -o yaml</div>
+        </div>
+
+    </div>
+
+    <!-- INFO CARD GRID -->
+    <div class="info-text-grid">
+        
+        <!-- Analogy -->
+        <div class="info-card">
+            <h2><span>1</span> Analogy (Samajhne ke liye)</h2>
+            <p><strong>Error Lab:</strong> Yeh ek "Fire Drill" (Aag bujhane ki mashq) hai. Jab production mein aag lage (cluster down ho) toh panic karne ke bajaye aapko theek se pata hona chahiye ke kounsa tool kahan use karna hai.</p>
+        </div>
+
+        <!-- Hands-on (The Errors) -->
+        <div class="info-card">
+            <h2><span>2</span> Hands-on: Deliberate Errors (Break & Fix)</h2>
+            <p>Hum in tamam errors ko jan boojh kar trigger karenge, aur phir inko unhi tools se diagnose aur fix karenge:</p>
+            
+            <table class="error-table">
+                <tr>
+                    <th>Error</th>
+                    <th>How to trigger (Kese toren)</th>
+                    <th>Skill Learned</th>
+                </tr>
+                <tr>
+                    <td><code>CrashLoopBackOff</code></td>
+                    <td>Ghalat command lagayen ya liveness probe fail karayen.</td>
+                    <td>Restart policy + logs</td>
+                </tr>
+                <tr>
+                    <td><code>ErrImagePull</code></td>
+                    <td>Image ka naam ghalat likhein ya private repo bina secret ke dein.</td>
+                    <td>Images + imagePullSecrets</td>
+                </tr>
+                <tr>
+                    <td><code>OOMKilled</code></td>
+                    <td>Memory limit boht kam (e.g. 10Mi) set karein.</td>
+                    <td>Resource limits</td>
+                </tr>
+                <tr>
+                    <td><code>Pending</code></td>
+                    <td>CPU request itni ziada maangein jo kisi node ke paas na ho.</td>
+                    <td>Scheduling + events</td>
+                </tr>
+                <tr>
+                    <td><code>502 / 503</code></td>
+                    <td>Gateway route mein ghalat port de dein.</td>
+                    <td>Gateway ↔ Service ↔ Pod chain</td>
+                </tr>
+                <tr>
+                    <td>Service unreachable</td>
+                    <td>Service ke selectors ghalat dalein (empty Endpoints).</td>
+                    <td>Labels / Endpoints mapping</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Best Practices -->
+        <div class="info-card">
+            <h2><span>3</span> Best Practices (Pro Tips)</h2>
+            <ul>
+                <li><strong>Fixed Triage Order:</strong> Hamesha is order mein debug karein: <br>
+                    <code>get pods</code> ➜ <code>describe</code> ➜ <code>logs</code> ➜ <code>get events</code> ➜ <code>get -o yaml</code>.
+                </li>
+                <li>Agar pod crash ho kar restart ho gaya hai aur naya pod chal raha hai, toh pichle crash wale pod ke logs dekhne ke liye <code>--previous</code> ya <code>-p</code> ka flag use karein: <code>kubectl logs &lt;pod-name&gt; -p</code>.</li>
+                <li>Events check karne ke liye is command se sort karein taake latest error neechay aaye: <code>kubectl get events --sort-by=.lastTimestamp</code>.</li>
+            </ul>
+        </div>
+
+        <!-- Done Check -->
+        <div class="info-card">
+            <h2><span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: -4px;"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Done-Check</h2>
+            <ul>
+                <li>Aapne upar table mein diye gaye har ek error ko apne hathon se create kiya, uska reason dhunda, aur fix kiya. You are now a Debugging Pro!</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="footer-signature">
+        <svg style="vertical-align: middle; margin-right: 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Anas Khan | 
+        <svg style="vertical-align: middle; margin: 0 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> anas.devops@hotmail.com | 
+        <svg style="vertical-align: middle; margin: 0 5px;" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg> devanaskhanops
+    </div>
+
+</div>
+
+</body>
+</html>
