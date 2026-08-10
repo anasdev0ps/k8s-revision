@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 5 — Health Probes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fcf9f2;
+            --border-color: #2c3e50;
+            --text-main: #2c3e50;
+            --k8s-blue: #326ce5;
+            --startup-color: #f59e0b; /* Amber */
+            --readiness-color: #10b981; /* Green */
+            --liveness-color: #ef4444; /* Red */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+            /* Polka dot background for cartoonish feel */
+            background-image: radial-gradient(#e5e0d8 2px, transparent 2px);
+            background-size: 30px 30px;
+        }
+
+        h1, h2, h3 {
+            font-weight: 900;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        .module-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .module-header img {
+            width: 80px;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        .module-header h1 {
+            font-size: 2.8rem;
+            color: var(--k8s-blue);
+            text-shadow: 3px 3px 0px var(--border-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
+        .module-header p {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #4a5568;
+            background: #fff;
+            display: inline-block;
+            padding: 8px 16px;
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+        }
+
+        /* DIAGRAM CONTAINER (MUST CONTAIN ALL ANIMATIONS) */
+        .html-diagram {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 500px;
+            margin: 0 auto 40px auto;
+            background: #fff;
+            border: 4px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 8px 8px 0px var(--border-color);
+            overflow: hidden;
+        }
+
+        .svg-layer {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+        /* Kubelet Box */
+        .kubelet-box {
+            position: absolute;
+            top: 50px;
+            left: 30px;
+            width: 200px;
+            background: #e2e8f0;
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            z-index: 10;
+            box-shadow: 4px 4px 0px var(--border-color);
+        }
+        .kubelet-box h3 { font-size: 1.4rem; margin-bottom: 10px; }
+
+        /* Probe Buttons inside Kubelet */
+        .probe {
+            margin: 10px 0;
+            padding: 8px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            box-shadow: 2px 2px 0px var(--border-color);
+        }
+        .probe.startup { background: var(--startup-color); color: #fff; }
+        .probe.readiness { background: var(--readiness-color); color: #fff; }
+        .probe.liveness { background: var(--liveness-color); color: #fff; }
+
+        /* Pod Box */
+        .pod-box {
+            position: absolute;
+            top: 100px;
+            right: 40px;
+            width: 250px;
+            background: #bfdbfe;
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            z-index: 10;
+            box-shadow: 4px 4px 0px var(--border-color);
+        }
+        .pod-box h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .app-container {
+            background: #fff;
+            border: 2px dashed var(--k8s-blue);
+            padding: 20px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            animation: pulseBg 2s infinite;
+        }
+
+        /* Service Traffic Gate */
+        .service-gate {
+            position: absolute;
+            bottom: 50px;
+            right: 110px;
+            width: 120px;
+            background: #c084fc;
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            z-index: 10;
+            font-weight: 800;
+            box-shadow: 4px 4px 0px var(--border-color);
+        }
+
+        /* SVG Paths and Animations */
+        path.connection {
+            fill: none;
+            stroke: var(--border-color);
+            stroke-width: 4;
+            stroke-dasharray: 8 8;
+        }
+
+        .signal {
+            fill: none;
+            stroke-width: 6;
+            stroke-linecap: round;
+        }
+
+        .signal-startup { stroke: var(--startup-color); stroke-dasharray: 10 20; animation: dashMove 2s linear infinite; }
+        .signal-readiness { stroke: var(--readiness-color); stroke-dasharray: 10 20; animation: dashMove 1.5s linear infinite; }
+        .signal-liveness { stroke: var(--liveness-color); stroke-dasharray: 10 20; animation: dashMove 1.8s linear infinite reverse; }
+        .signal-traffic { stroke: #9333ea; stroke-dasharray: 15 15; stroke-width: 8; animation: dashMove 1s linear infinite; }
+
+        @keyframes dashMove {
+            to { stroke-dashoffset: -100; }
+        }
+
+        @keyframes pulseBg {
+            0%, 100% { background: #fff; }
+            50% { background: #e0f2fe; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Labels over SVG */
+        .flow-text {
+            position: absolute;
+            background: #fff;
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            z-index: 20;
+            white-space: nowrap;
+            box-shadow: 2px 2px 0px var(--border-color);
+        }
+        
+        .text-startup { top: 75px; left: 350px; color: var(--startup-color); }
+        .text-readiness { top: 160px; left: 350px; color: var(--readiness-color); }
+        .text-liveness { top: 250px; left: 350px; color: var(--liveness-color); }
+        .text-traffic { bottom: 130px; right: 170px; color: #9333ea; }
+
+        /* INFO TEXT (OUTSIDE DIAGRAM) */
+        .info-text {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .info-card {
+            background: #fff;
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 6px 6px 0px var(--border-color);
+            transition: transform 0.2s;
+        }
+
+        .info-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0px var(--border-color);
+        }
+
+        .info-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--k8s-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card h2 span {
+            background: var(--k8s-blue);
+            color: #fff;
+            width: 30px; height: 30px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            border: 2px solid var(--border-color);
+        }
+
+        .info-card ul {
+            list-style-type: none;
+        }
+
+        .info-card ul li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .info-card ul li::before {
+            content: "👉";
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 1rem;
+        }
+
+        code {
+            background: #f1f5f9;
+            color: #ef4444;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #cbd5e1;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        .footer-signature {
+            text-align: center;
+            margin-top: 60px;
+            font-weight: 800;
+            color: #64748b;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="module-header">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg" alt="K8s Logo">
+        <h1>Module 5: Health Probes</h1>
+        <p>Liveness / Readiness / Startup (The "Are you okay?" checks)</p>
+    </div>
+
+    <!-- DIAGRAM CONTAINER -->
+    <div class="html-diagram">
+        
+        <!-- Background SVG lines -->
+        <svg class="svg-layer" viewBox="0 0 900 500">
+            <!-- Startup Line -->
+            <path class="connection" d="M 230 105 C 400 105, 500 145, 610 145" />
+            <path class="signal signal-startup" d="M 230 105 C 400 105, 500 145, 610 145" />
+            
+            <!-- Readiness Line -->
+            <path class="connection" d="M 230 155 C 400 155, 500 175, 610 175" />
+            <path class="signal signal-readiness" d="M 230 155 C 400 155, 500 175, 610 175" />
+
+            <!-- Liveness Line -->
+            <path class="connection" d="M 230 205 C 400 205, 500 205, 610 205" />
+            <path class="signal signal-liveness" d="M 230 205 C 400 205, 500 205, 610 205" />
+
+            <!-- Traffic Line (Service to Pod) -->
+            <path class="connection" d="M 730 400 C 730 320, 730 280, 730 230" />
+            <path class="signal signal-traffic" d="M 730 400 C 730 320, 730 280, 730 230" />
+        </svg>
+
+        <!-- Kubelet Node -->
+        <div class="kubelet-box">
+            <h3>Kubelet</h3>
+            <p style="font-size: 0.8rem; font-weight: 700; margin-bottom:10px;">(Runs the Checks)</p>
+            <div class="probe startup">1. Startup Probe</div>
+            <div class="probe readiness">2. Readiness Probe</div>
+            <div class="probe liveness">3. Liveness Probe</div>
+        </div>
+
+        <!-- Pod Node -->
+        <div class="pod-box">
+            <h3>Pod</h3>
+            <div class="app-container">
+                Application Container
+                <div style="font-size: 0.8rem; color: #64748b; margin-top:5px;">Listening on Port 80</div>
+            </div>
+        </div>
+
+        <!-- Service Gate Node -->
+        <div class="service-gate">
+            Service<br>(Traffic)
+        </div>
+
+        <!-- Flow Labels -->
+        <div class="flow-text text-startup">"Wait for boot"</div>
+        <div class="flow-text text-readiness">"Open Traffic Gate"</div>
+        <div class="flow-text text-liveness">"Restart if Hung"</div>
+        <div class="flow-text text-traffic">Real User Traffic</div>
+
+    </div>
+
+    <!-- INFO TEXT CONTAINER -->
+    <div class="info-text">
+        
+        <!-- Analogy -->
+        <div class="info-card">
+            <h2><span>1</span> Analogy (Samajhne ke liye)</h2>
+            <ul>
+                <li><strong>Readiness:</strong> "Are you ready to take calls?" — Yeh ek Traffic Gate hai. Jab tak ready nahi ho, traffic nahi aayega.</li>
+                <li><strong>Liveness:</strong> "Are you still alive or stuck?" — Yeh Restart Trigger hai. Agar app stuck hai, toh container ko maar kar naya chala dega.</li>
+                <li><strong>Startup:</strong> "Give slow starters extra time before we judge them." — Slow boot hone wali apps ko time deta hai taake Liveness unhein jaldi na maar de.</li>
+            </ul>
+        </div>
+
+        <!-- Concept -->
+        <div class="info-card">
+            <h2><span>2</span> Core Concept</h2>
+            <ul>
+                <li><strong>Readiness</strong> Service traffic ko control karta hai (agar fail ho toh Endpoint se pod remove ho jata hai).</li>
+                <li><strong>Liveness</strong> hung ya freeze container ko restart karta hai.</li>
+                <li><strong>Startup</strong> slow-boot apps ko premature liveness kills se protect karta hai.</li>
+                <li><strong>Probe Types (Checks):</strong> <code>httpGet</code> (API check), <code>tcpSocket</code> (port check), <code>exec</code> (script run karna), <code>grpc</code>.</li>
+            </ul>
+        </div>
+
+        <!-- Hands-on -->
+        <div class="info-card">
+            <h2><span>3</span> Hands-on Steps</h2>
+            <ul>
+                <li>Apne Pod mein teeno (3) probes add karein.</li>
+                <li><strong>Readiness fail karein:</strong> Dekhein kaise Pod Service ke Endpoints se drop (gayab) ho jata hai.</li>
+                <li><strong>Liveness fail karein:</strong> Dekhein kaise Pod ke restarts badhna (climb) shuru ho jate hain.</li>
+            </ul>
+        </div>
+
+        <!-- Errors -->
+        <div class="info-card">
+            <h2><span>4</span> Errors to Break + Fix</h2>
+            <ul>
+                <li><strong>Error 1:</strong> Wrong probe path ya port dena. Isse Liveness fail hogi aur pod <code>CrashLoopBackOff</code> state mein chala jayega.</li>
+                <li><strong>Error 2:</strong> Too-tight <code>initialDelaySeconds</code> rakhna (app on hone se pehle hi fail kar dena).</li>
+            </ul>
+        </div>
+
+        <!-- Best Practices -->
+        <div class="info-card">
+            <h2><span>5</span> Best Practices (Pro Tips)</h2>
+            <ul>
+                <li>Readiness hamesha real dependency check par lagayen (e.g., DB ready hai ya nahi).</li>
+                <li>Liveness hamesha lightweight honi chahiye (heavy query na lagayen).</li>
+                <li>Slow apps ke liye HAMESHA <code>startupProbe</code> set karein.</li>
+                <li>Liveness ko kabhi bhi external services par depend na karein warna bahar ka issue aapke pods ko restart kar dega.</li>
+            </ul>
+        </div>
+
+        <!-- Done Check -->
+        <div class="info-card">
+            <h2><span>✅</span> Done-Check</h2>
+            <ul>
+                <li>Traffic ek not-ready pod ki taraf aana stop ho gaya hai, **lekin pod kill (restart) nahi hua**. (Yeh Readiness ka proof hai!)</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <!-- Footer Signature -->
+    <div class="footer-signature">
+        <svg style="vertical-align: middle; margin-right: 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Anas Khan | 
+        <svg style="vertical-align: middle; margin: 0 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> anas.devops@hotmail.com | 
+        <svg style="vertical-align: middle; margin: 0 5px;" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg> devanaskhanops
+    </div>
+
+</div>
+
+</body>
+</html>
