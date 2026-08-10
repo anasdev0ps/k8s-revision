@@ -50,4 +50,4 @@ At the very end of the `.container`, use the exact SVG-based footer structure.
 ## 6. Git Commit & Push (CRITICAL)
 - **1-by-1 Commit:** Jab Anas kisi bhi module ko **approve** kar de, toh tum (AI) lazmi taur par usay Git mein add, commit, aur push karoge.
 - **Clean Commits:** Har module ka apna ek alag aur clean commit hona chahiye (e.g., `git commit -m "feat: add module 4 - configmaps and secrets"`).
-- **Push:** Commit karne ke baad HAMESHA `git push` karna hai taake changes remote par save ho jayen.
+- **Push & GH-Pages Update:** Commit karne ke baad HAMESHA pehle apni branch (`dev`) par `git push` karna hai, aur sath hi `gh-pages` branch ko bhi lazmi update kar ke push karna hai taake live dashboard par naya module foran available ho jaye!
