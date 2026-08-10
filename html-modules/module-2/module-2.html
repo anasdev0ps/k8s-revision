@@ -169,7 +169,62 @@
             align-items: center;
             gap: 8px;
         }
-    </style>
+    
+        /* Info Card Grid applied by script */
+        .info-text-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-top: 40px;
+        }
+        .info-card {
+            background: #fff !important;
+            border: 3px solid #2c3e50 !important;
+            border-radius: 12px !important;
+            padding: 25px !important;
+            box-shadow: 6px 6px 0px #2c3e50 !important;
+            transition: transform 0.2s;
+            margin-bottom: 20px;
+        }
+        .info-card:hover {
+            transform: translate(-2px, -2px) !important;
+            box-shadow: 8px 8px 0px #2c3e50 !important;
+        }
+        .info-card h2, .info-card h3 {
+            font-size: 1.5rem !important;
+            margin-bottom: 15px !important;
+            color: #326ce5 !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: none !important;
+        }
+        .info-card h2 span, .info-card h3 span {
+            background: #326ce5 !important;
+            color: #fff !important;
+            width: 30px; height: 30px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50% !important;
+            font-size: 1.1rem !important;
+            border: 2px solid #2c3e50 !important;
+        }
+        .info-card ul, .info-card ol {
+            padding-left: 20px;
+        }
+        .info-card li {
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+        .info-card li::before {
+            content: "✦ ";
+            color: #326ce5;
+            font-weight: bold;
+        }
+
+</style>
 
     
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
@@ -207,7 +262,62 @@
             border: 2px solid #2c3e50 !important;
             box-shadow: 2px 2px 0px #2c3e50 !important;
         }
-    </style>
+    
+        /* Info Card Grid applied by script */
+        .info-text-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-top: 40px;
+        }
+        .info-card {
+            background: #fff !important;
+            border: 3px solid #2c3e50 !important;
+            border-radius: 12px !important;
+            padding: 25px !important;
+            box-shadow: 6px 6px 0px #2c3e50 !important;
+            transition: transform 0.2s;
+            margin-bottom: 20px;
+        }
+        .info-card:hover {
+            transform: translate(-2px, -2px) !important;
+            box-shadow: 8px 8px 0px #2c3e50 !important;
+        }
+        .info-card h2, .info-card h3 {
+            font-size: 1.5rem !important;
+            margin-bottom: 15px !important;
+            color: #326ce5 !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: none !important;
+        }
+        .info-card h2 span, .info-card h3 span {
+            background: #326ce5 !important;
+            color: #fff !important;
+            width: 30px; height: 30px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50% !important;
+            font-size: 1.1rem !important;
+            border: 2px solid #2c3e50 !important;
+        }
+        .info-card ul, .info-card ol {
+            padding-left: 20px;
+        }
+        .info-card li {
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+        .info-card li::before {
+            content: "✦ ";
+            color: #326ce5;
+            font-weight: bold;
+        }
+
+</style>
 </head>
 
 
@@ -260,41 +370,54 @@
             </div>
         </div>
 
-        <div class="analogy">
-            <strong>Analogy:</strong> Service = Restaurant ki Receptionist. Pod = Waiter. Agar koi waiter kaam chor de aur naya waiter aaye (Pod delete ho kar naya ban jaye), toh customer ko farq nahi parta kyunke wo order Receptionist (Service) ko deta hai, aur wo khud dekhti hai ke konsa waiter free hai.
-        </div>
+        <div class="info-text-grid">
+<div class="info-card">
+<h2><span>1</span> Analogy</h2>
+<p>
+             Service = Restaurant ki Receptionist. Pod = Waiter. Agar koi waiter kaam chor de aur naya waiter aaye (Pod delete ho kar naya ban jaye), toh customer ko farq nahi parta kyunke wo order Receptionist (Service) ko deta hai, aur wo khud dekhti hai ke konsa waiter free hai.
+        </p>
+</div>
 
-        <h2>Hum Kya Seekhenge (Concepts)</h2>
-        <ul>
+        <div class="info-card">
+<h2><span>2</span> Concepts</h2>
+<ul>
             <li><strong>ClusterIP:</strong> Default service. Sirf cluster ke andar ke pods isay access kar sakte hain.</li>
             <li><strong>NodePort:</strong> Cluster ke bahar se access karne ke liye (host VM ki IP aur ek specific port ke zariye).</li>
             <li><strong>LoadBalancer:</strong> Cloud provider ka external load balancer attach karne ke liye (jaise Azure load balancer).</li>
             <li><strong>CoreDNS:</strong> Kubernetes ka apna DNS system jo Service ke naam (jaise `my-app-service`) ko uski IP mein translate karta hai.</li>
         </ul>
+</div>
 
-        <h2>Hands-on Steps</h2>
-        <ol>
+        <div class="info-card">
+<h2><span>3</span> Hands-on Steps</h2>
+<ul>
             <li>Ek <code>ClusterIP</code> service banayein aur doosre pod se usay access karke check karein.</li>
             <li>Us service ko modify karke <code>NodePort</code> banayein, aur apni host VM ki IP se browser mein access karein.</li>
             <li>Nodes ke andar ja kar iptables aur IPVS rules check karein jo Kubernetes ne automatically banaye hain.</li>
-        </ol>
+        </ul>
+</div>
 
-        <div class="error-section">
-            <h3>Errors (Jo hum break karke fix karenge)</h3>
+        <div class="info-card">
+<h2><span>4</span> Errors (Jo hum break karke fix karenge)</h2>
+
             <p>Hum jaan boojh kar in issues ko create aur fix karenge:</p>
             <ul>
                 <li><strong>TargetPort Mismatch:</strong> Jab Service ghalat port par traffic bheje (connection refused error).</li>
                 <li><strong>Selector Mismatch:</strong> Jab Service ko Pods na milein, aur uske `Endpoints` empty show hon.</li>
             </ul>
-        </div>
+        
+</div>
 
-        <div class="best-practice">
-            <h3>Best Practices</h3>
+        <div class="info-card">
+<h2><span>5</span> Best Practices</h2>
+
             <ul>
                 <li>Hamesha named ports use karein (jaise port ka naam <code>http</code> rakhein, bajaye sirf `80` likhne ke). Is se configuration aasaan rehti hai.</li>
                 <li>Troubleshooting ke liye hamesha <code>kubectl get endpoints</code> command chalayen taake pata chale ke Service pods se connect hui hai ya nahi.</li>
             </ul>
-        </div>
+        
+</div>
+</div><!-- close grid -->
 
         <h2>Done-Check</h2>
         <p>Yeh module tab complete hoga jab aap safely ClusterIP aur NodePort ko configure kar lein aur samajh jayen ke `Endpoints` kaise kaam karte hain.</p>

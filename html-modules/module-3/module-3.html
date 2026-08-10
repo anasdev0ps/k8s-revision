@@ -284,7 +284,62 @@
             align-items: center;
             gap: 8px;
         }
-    </style>
+    
+        /* Info Card Grid applied by script */
+        .info-text-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-top: 40px;
+        }
+        .info-card {
+            background: #fff !important;
+            border: 3px solid #2c3e50 !important;
+            border-radius: 12px !important;
+            padding: 25px !important;
+            box-shadow: 6px 6px 0px #2c3e50 !important;
+            transition: transform 0.2s;
+            margin-bottom: 20px;
+        }
+        .info-card:hover {
+            transform: translate(-2px, -2px) !important;
+            box-shadow: 8px 8px 0px #2c3e50 !important;
+        }
+        .info-card h2, .info-card h3 {
+            font-size: 1.5rem !important;
+            margin-bottom: 15px !important;
+            color: #326ce5 !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: none !important;
+        }
+        .info-card h2 span, .info-card h3 span {
+            background: #326ce5 !important;
+            color: #fff !important;
+            width: 30px; height: 30px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50% !important;
+            font-size: 1.1rem !important;
+            border: 2px solid #2c3e50 !important;
+        }
+        .info-card ul, .info-card ol {
+            padding-left: 20px;
+        }
+        .info-card li {
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+        .info-card li::before {
+            content: "✦ ";
+            color: #326ce5;
+            font-weight: bold;
+        }
+
+</style>
 
     
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
@@ -322,7 +377,62 @@
             border: 2px solid #2c3e50 !important;
             box-shadow: 2px 2px 0px #2c3e50 !important;
         }
-    </style>
+    
+        /* Info Card Grid applied by script */
+        .info-text-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-top: 40px;
+        }
+        .info-card {
+            background: #fff !important;
+            border: 3px solid #2c3e50 !important;
+            border-radius: 12px !important;
+            padding: 25px !important;
+            box-shadow: 6px 6px 0px #2c3e50 !important;
+            transition: transform 0.2s;
+            margin-bottom: 20px;
+        }
+        .info-card:hover {
+            transform: translate(-2px, -2px) !important;
+            box-shadow: 8px 8px 0px #2c3e50 !important;
+        }
+        .info-card h2, .info-card h3 {
+            font-size: 1.5rem !important;
+            margin-bottom: 15px !important;
+            color: #326ce5 !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: none !important;
+        }
+        .info-card h2 span, .info-card h3 span {
+            background: #326ce5 !important;
+            color: #fff !important;
+            width: 30px; height: 30px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50% !important;
+            font-size: 1.1rem !important;
+            border: 2px solid #2c3e50 !important;
+        }
+        .info-card ul, .info-card ol {
+            padding-left: 20px;
+        }
+        .info-card li {
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+        .info-card li::before {
+            content: "✦ ";
+            color: #326ce5;
+            font-weight: bold;
+        }
+
+</style>
 </head>
 
 
@@ -403,44 +513,57 @@
         
         <p style="text-align: center; font-size: 0.9em; color: #555;"><i>Upar di gayi animation mein dekhein: Service sirf usi Pod ko apna traffic (green moving line) bhej rahi hai jiska Label <code>env=prod</code> match ho raha hai. Doosre Pod ko ignore kar diya gaya.</i></p>
 
-        <div class="analogy">
-            <strong>Analogy:</strong><br>
+        <div class="info-text-grid">
+<div class="info-card">
+<h2><span>1</span> Analogy</h2>
+<p>
+            
             - <strong>Namespace:</strong> Ek ghar mein alag alag kamre (jaise Dev room aur Prod room). Dono kamron mein same naam ki cheezein ho sakti hain.<br>
             - <strong>Labels:</strong> Items par lagi "Sticky Notes" jinki madad se hum cheezon ko filter karte hain (e.g., "Find all boxes where env=prod").<br>
             - <strong>Annotations:</strong> Item ke sath lagi hui "Instruction Manual" jisme bari bari details likhi hoti hain jo sirf insano ko padhne ke liye hoti hain.
-        </div>
+        </p>
+</div>
 
-        <h2>Hum Kya Seekhenge (Concepts)</h2>
-        <ul>
+        <div class="info-card">
+<h2><span>2</span> Concepts</h2>
+<ul>
             <li><strong>Namespaces:</strong> Resources ko logical groups mein taqseem (divide) karna taake testing aur live environment apas mein takrayen na.</li>
             <li><strong>Labels:</strong> Chotay tags (jaise <code>app=backend</code>) jo Kubernetes use karta hai yeh pehchanne pehchanne ke liye ke konsa traffic kis Pod ko bhejna hai.</li>
             <li><strong>Annotations:</strong> Lambi details jo tools ya humans padhte hain magar Kubernetes unse filtering nahi karta.</li>
         </ul>
+</div>
 
-        <h2>Hands-on Steps</h2>
-        <ol>
+        <div class="info-card">
+<h2><span>3</span> Hands-on Steps</h2>
+<ul>
             <li>Do naye namespaces banayein: <code>kubectl create namespace dev</code> aur <code>kubectl create namespace prod</code>.</li>
             <li>Ek Pod <code>dev</code> namespace mein deploy karein aur uspar label lagayen: <code>env=dev</code>.</li>
             <li><code>kubectl get pods -n dev -l env=dev</code> command chala kar specific labeled pod ko dhoond kar dekhein.</li>
             <li>Pod ko describe karke uski annotations aur labels verify karein.</li>
-        </ol>
+        </ul>
+</div>
 
-        <div class="error-section">
-            <h3>Errors (Jo hum break karke fix karenge)</h3>
+        <div class="info-card">
+<h2><span>4</span> Errors (Jo hum break karke fix karenge)</h2>
+
             <p>Hum jaan boojh kar in issues ko create aur fix karenge:</p>
             <ul>
                 <li><strong>Querying Wrong Namespace:</strong> Jab aap ghalat kamre (namespace) mein pod dhoondte hain toh <em>"No resources found"</em> ka error aata hai.</li>
                 <li><strong>Typo in Labels:</strong> Agar Service ka selector aur Pod ka label match na karein (jaise animation mein <code>dev</code> pod ke sath hua), toh connection nahi banta.</li>
             </ul>
-        </div>
+        
+</div>
 
-        <div class="best-practice">
-            <h3>Best Practices</h3>
+        <div class="info-card">
+<h2><span>5</span> Best Practices</h2>
+
             <ul>
                 <li>Hamesha custom namespaces banayen, <code>default</code> namespace mein production workloads kabhi mat rakhein.</li>
                 <li>Ek standard labeling scheme follow karein (jaise <code>app.kubernetes.io/name</code>) taake future mein asani ho.</li>
             </ul>
-        </div>
+        
+</div>
+</div><!-- close grid -->
 
         <h2>Done-Check</h2>
         <p>Yeh module tab complete hoga jab aap safely <code>dev</code> aur <code>prod</code> namespaces mein pods deploy kar lein aur unhein labels ke zariye asani se filter kar sakein.</p>

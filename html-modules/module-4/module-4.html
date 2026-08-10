@@ -224,7 +224,62 @@
             align-items: center;
             gap: 8px;
         }
-    </style>
+    
+        /* Info Card Grid applied by script */
+        .info-text-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-top: 40px;
+        }
+        .info-card {
+            background: #fff !important;
+            border: 3px solid #2c3e50 !important;
+            border-radius: 12px !important;
+            padding: 25px !important;
+            box-shadow: 6px 6px 0px #2c3e50 !important;
+            transition: transform 0.2s;
+            margin-bottom: 20px;
+        }
+        .info-card:hover {
+            transform: translate(-2px, -2px) !important;
+            box-shadow: 8px 8px 0px #2c3e50 !important;
+        }
+        .info-card h2, .info-card h3 {
+            font-size: 1.5rem !important;
+            margin-bottom: 15px !important;
+            color: #326ce5 !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: none !important;
+        }
+        .info-card h2 span, .info-card h3 span {
+            background: #326ce5 !important;
+            color: #fff !important;
+            width: 30px; height: 30px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50% !important;
+            font-size: 1.1rem !important;
+            border: 2px solid #2c3e50 !important;
+        }
+        .info-card ul, .info-card ol {
+            padding-left: 20px;
+        }
+        .info-card li {
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+        .info-card li::before {
+            content: "✦ ";
+            color: #326ce5;
+            font-weight: bold;
+        }
+
+</style>
 
     
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
@@ -262,7 +317,62 @@
             border: 2px solid #2c3e50 !important;
             box-shadow: 2px 2px 0px #2c3e50 !important;
         }
-    </style>
+    
+        /* Info Card Grid applied by script */
+        .info-text-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-top: 40px;
+        }
+        .info-card {
+            background: #fff !important;
+            border: 3px solid #2c3e50 !important;
+            border-radius: 12px !important;
+            padding: 25px !important;
+            box-shadow: 6px 6px 0px #2c3e50 !important;
+            transition: transform 0.2s;
+            margin-bottom: 20px;
+        }
+        .info-card:hover {
+            transform: translate(-2px, -2px) !important;
+            box-shadow: 8px 8px 0px #2c3e50 !important;
+        }
+        .info-card h2, .info-card h3 {
+            font-size: 1.5rem !important;
+            margin-bottom: 15px !important;
+            color: #326ce5 !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: none !important;
+        }
+        .info-card h2 span, .info-card h3 span {
+            background: #326ce5 !important;
+            color: #fff !important;
+            width: 30px; height: 30px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50% !important;
+            font-size: 1.1rem !important;
+            border: 2px solid #2c3e50 !important;
+        }
+        .info-card ul, .info-card ol {
+            padding-left: 20px;
+        }
+        .info-card li {
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+        .info-card li::before {
+            content: "✦ ";
+            color: #326ce5;
+            font-weight: bold;
+        }
+
+</style>
 </head>
 
 
@@ -334,46 +444,59 @@
             <strong>Animation Guide:</strong> Left side par <code>ConfigMap</code> (normal settings) aur <code>Secret</code> (locked/encoded passwords) hain. Yeh dono data alag alag tareeqon se <strong>Pod</strong> ke andar bheje ja rahe hain. (Hint: Secret wale text par mouse hover karke dekhein!)
         </div>
 
-        <div class="analogy">
-            <strong>Analogy:</strong><br>
+        <div class="info-text-grid">
+<div class="info-card">
+<h2><span>1</span> Analogy</h2>
+<p>
+            
             - <strong>ConfigMap:</strong> Office ke notice board par lagi <em>Sticky Note</em>, jo koi bhi padh sakta hai (e.g., Office timings).<br>
             - <strong>Secret:</strong> Manager ki table ke locked <em>Drawer</em> mein rakha hua document (e.g., WiFi password).
-        </div>
+        </p>
+</div>
 
-        <h2>Hum Kya Seekhenge (Concepts)</h2>
-        <ul>
+        <div class="info-card">
+<h2><span>2</span> Concepts</h2>
+<ul>
             <li><strong>ConfigMap:</strong> Non-confidential data (jaise URLs, ports, toggle flags) ko store karne ka tareeqa.</li>
             <li><strong>Secret:</strong> Confidential data (jaise passwords, tokens, SSH keys) ko Base64 mein encode kar ke store karna.</li>
             <li><strong>Injection Methods:</strong> Data ko Pod mein as an <em>Environment Variable</em> (<code>envFrom</code>) dalna ya as a <em>File</em> (Volume mount) lagana.</li>
             <li><strong>Base64 vs Encryption:</strong> Yaad rakhein ke default Kubernetes Secrets encrypted nahi hote, sirf Base64 encoded (scrambled) hote hain!</li>
         </ul>
+</div>
 
-        <h2>Hands-on Steps</h2>
-        <ol>
+        <div class="info-card">
+<h2><span>3</span> Hands-on Steps</h2>
+<ul>
             <li>Ek ConfigMap banayen: <code>kubectl create configmap app-config --from-literal=PORT=3000</code>.</li>
             <li>Ek Secret banayen: <code>kubectl create secret generic db-pass --from-literal=password=mysecret</code>.</li>
             <li>Deployment YAML mein ConfigMap ko as Environment Variable (<code>env</code>) mount karein.</li>
             <li>Deployment YAML mein Secret ko as a File (<code>volumeMount</code>) attach karein.</li>
             <li>ConfigMap ki value update karke dekhein ke pod usey foran pick karta hai ya restart ki zaroorat hoti hai.</li>
-        </ol>
+        </ul>
+</div>
 
-        <div class="error-section">
-            <h3>Errors (Jo hum break karke fix karenge)</h3>
+        <div class="info-card">
+<h2><span>4</span> Errors (Jo hum break karke fix karenge)</h2>
+
             <p>Hum jaan boojh kar in issues ko create aur fix karenge:</p>
             <ul>
                 <li><strong>Missing Key/ConfigMap:</strong> Agar hum YAML mein aisa ConfigMap maangein jo banaya hi nahi, toh Pod <code>CreateContainerConfigError</code> state mein phans jata hai.</li>
                 <li><strong>Secret not mounted:</strong> Agar app password dhoond raha hai aur file mount nahi hui, toh application 500 Server Error deti hai.</li>
             </ul>
-        </div>
+        
+</div>
 
-        <div class="best-practice">
-            <h3>Best Practices</h3>
+        <div class="info-card">
+<h2><span>5</span> Best Practices</h2>
+
             <ul>
                 <li><strong>CRITICAL:</strong> Plaintext Secrets kabhi bhi apne Git repository mein commit na karein!</li>
                 <li>Hamesha "Sealed Secrets" ya "External Secrets Operator" (jaise AWS Secrets Manager ya HashiCorp Vault) use karein production ke liye.</li>
                 <li>Kubernetes cluster par <em>etcd encryption-at-rest</em> enable karein taake data hard-drive par bhi secure rahay.</li>
             </ul>
-        </div>
+        
+</div>
+</div><!-- close grid -->
 
         <h2>Done-Check</h2>
         <p>Yeh module tab complete hoga jab aapka app safely ConfigMap se port aur Secret se database password read kar lega aur successfully chal parega.</p>

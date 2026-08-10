@@ -136,7 +136,62 @@
             align-items: center;
             gap: 8px;
         }
-    </style>
+    
+        /* Info Card Grid applied by script */
+        .info-text-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-top: 40px;
+        }
+        .info-card {
+            background: #fff !important;
+            border: 3px solid #2c3e50 !important;
+            border-radius: 12px !important;
+            padding: 25px !important;
+            box-shadow: 6px 6px 0px #2c3e50 !important;
+            transition: transform 0.2s;
+            margin-bottom: 20px;
+        }
+        .info-card:hover {
+            transform: translate(-2px, -2px) !important;
+            box-shadow: 8px 8px 0px #2c3e50 !important;
+        }
+        .info-card h2, .info-card h3 {
+            font-size: 1.5rem !important;
+            margin-bottom: 15px !important;
+            color: #326ce5 !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: none !important;
+        }
+        .info-card h2 span, .info-card h3 span {
+            background: #326ce5 !important;
+            color: #fff !important;
+            width: 30px; height: 30px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50% !important;
+            font-size: 1.1rem !important;
+            border: 2px solid #2c3e50 !important;
+        }
+        .info-card ul, .info-card ol {
+            padding-left: 20px;
+        }
+        .info-card li {
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+        .info-card li::before {
+            content: "✦ ";
+            color: #326ce5;
+            font-weight: bold;
+        }
+
+</style>
 
     
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
@@ -174,7 +229,62 @@
             border: 2px solid #2c3e50 !important;
             box-shadow: 2px 2px 0px #2c3e50 !important;
         }
-    </style>
+    
+        /* Info Card Grid applied by script */
+        .info-text-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-top: 40px;
+        }
+        .info-card {
+            background: #fff !important;
+            border: 3px solid #2c3e50 !important;
+            border-radius: 12px !important;
+            padding: 25px !important;
+            box-shadow: 6px 6px 0px #2c3e50 !important;
+            transition: transform 0.2s;
+            margin-bottom: 20px;
+        }
+        .info-card:hover {
+            transform: translate(-2px, -2px) !important;
+            box-shadow: 8px 8px 0px #2c3e50 !important;
+        }
+        .info-card h2, .info-card h3 {
+            font-size: 1.5rem !important;
+            margin-bottom: 15px !important;
+            color: #326ce5 !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: none !important;
+        }
+        .info-card h2 span, .info-card h3 span {
+            background: #326ce5 !important;
+            color: #fff !important;
+            width: 30px; height: 30px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50% !important;
+            font-size: 1.1rem !important;
+            border: 2px solid #2c3e50 !important;
+        }
+        .info-card ul, .info-card ol {
+            padding-left: 20px;
+        }
+        .info-card li {
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+        .info-card li::before {
+            content: "✦ ";
+            color: #326ce5;
+            font-weight: bold;
+        }
+
+</style>
 </head>
 
 
@@ -189,20 +299,27 @@
 
         <img src="module-0-diagram.jpg" alt="Kubernetes multi-node cluster watercolor diagram">
 
-        <div class="analogy">
-            <strong>Analogy:</strong> Host VM = Ek bari building. Multipass = Building ke andar chote flats (VMs) banane wala tool. Har flat = Ek Kubernetes node. Kubeadm = Woh wiring jo in tamam flats ko aapas mein connect karke ek system banati hai.
-        </div>
+        <div class="info-text-grid">
+<div class="info-card">
+<h2><span>1</span> Analogy</h2>
+<p>
+             Host VM = Ek bari building. Multipass = Building ke andar chote flats (VMs) banane wala tool. Har flat = Ek Kubernetes node. Kubeadm = Woh wiring jo in tamam flats ko aapas mein connect karke ek system banati hai.
+        </p>
+</div>
 
-        <h2>Hum Kya Seekhenge (Concepts)</h2>
-        <ul>
+        <div class="info-card">
+<h2><span>2</span> Concepts</h2>
+<ul>
             <li><strong>Nested Virtualization:</strong> Apni Azure Host VM ke andar mazeed Virtual Machines (VMs) run karna.</li>
             <li><strong>Multipass:</strong> Ubuntu instances ko jaldi se spin up karne ke liye Canonical ka ek lightweight VM manager.</li>
             <li><strong>Kubeadm:</strong> Cluster (control-plane aur workers) ko bootstrap karne ke liye Kubernetes ka official tool.</li>
             <li><strong>CNI (Container Network Interface):</strong> Networking plugin (jaise Flannel) jo pods ko mukhtalif nodes ke darmiyan baat cheet karne ki ijazat deta hai.</li>
         </ul>
+</div>
 
-        <h2>Hands-on Steps</h2>
-        <ol>
+        <div class="info-card">
+<h2><span>3</span> Hands-on Steps</h2>
+<ul>
             <li>Azure VM par nested virtualization check karein (<code>ls -la /dev/kvm</code>) aur Multipass install karein.</li>
             <li>3 Ubuntu VMs launch karein: 1 <code>master</code> node (control plane) aur 2 <code>worker</code> nodes.</li>
             <li>Tamam nodes ko prepare karein: swap disable karein, networking modules (<code>br_netfilter</code>, <code>overlay</code>) load karein, aur container runtime (<code>containerd</code>) install karein.</li>
@@ -211,26 +328,32 @@
             <li>Pod networking ke liye Flannel CNI plugin apply karein.</li>
             <li>Dono worker nodes ko kubeadm join token ke zariye cluster se connect karein.</li>
             <li>Cluster ki health <code>kubectl get nodes -o wide</code> se verify karein.</li>
-        </ol>
+        </ul>
+</div>
 
-        <div class="error-section">
-            <h3>Errors (Jo hum break karke fix karenge)</h3>
+        <div class="info-card">
+<h2><span>4</span> Errors (Jo hum break karke fix karenge)</h2>
+
             <p>Hum jaan boojh kar in issues ko create aur fix karenge:</p>
             <ul>
                 <li><strong>CIDR clash:</strong> Pods ke liye ghalat IP range use karna.</li>
                 <li><strong>Cgroup mismatch:</strong> containerd ki ghalat configuration ki wajah se nodes ka <code>NotReady</code> state mein phans jana.</li>
                 <li><strong>Swap failure:</strong> Swap memory disable na hone ki wajah se Kubelet ka start hone se inkar karna.</li>
             </ul>
-        </div>
+        
+</div>
 
-        <div class="best-practice">
-            <h3>Best Practices</h3>
+        <div class="info-card">
+<h2><span>5</span> Best Practices</h2>
+
             <ul>
                 <li>Hamesha Kubernetes ka exact version (jaise <code>v1.35</code>) pin karein aur <code>apt-mark hold</code> use karein taake achanak upgrade na ho jaye.</li>
                 <li>Node roles ko separate rakhein (Control Plane vs Workers).</li>
                 <li>Koi bhi destructive experiment karne se pehle apni working state ka snapshot lein (maslan Multipass VMs ko stop/clone karna).</li>
             </ul>
-        </div>
+        
+</div>
+</div><!-- close grid -->
 
         <h2>Done-Check</h2>
         <p>Yeh module tab complete hoga jab aapke <strong>3 nodes Ready status</strong> mein honge, aur ek test Nginx pod run kar raha hoga jo Service ke zariye reachable ho.</p>
