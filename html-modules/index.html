@@ -4,122 +4,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kubernetes Mastery Lab</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-base: #000000;
+            --card-bg: #0a0a0a;
+            --card-hover: #111111;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.2);
+            --text-main: #ededed;
+            --text-muted: #a1a1aa;
+            --accent: #326CE5;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-        body {
-            font-family: 'Outfit', sans-serif;
-            background-color: #0b1120;
-            color: #f8fafc;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
-        
-        /* Animated Background Orbs */
-        .bg-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            z-index: -1;
-            animation: float 15s ease-in-out infinite;
-            opacity: 0.6;
-        }
-        .orb-1 {
-            width: 40vw; height: 40vw;
-            background: linear-gradient(135deg, #326CE5 0%, #1e40af 100%);
-            top: -10%; left: -10%;
-        }
-        .orb-2 {
-            width: 35vw; height: 35vw;
-            background: linear-gradient(135deg, #8b5cf6 0%, #4c1d95 100%);
-            bottom: -10%; right: -10%;
-            animation-delay: -5s;
-        }
-        .orb-3 {
-            width: 25vw; height: 25vw;
-            background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
-            top: 40%; left: 40%;
-            animation-delay: -10s;
-        }
 
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            line-height: 1.5;
+            /* Sleek developer grid background */
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            background-position: center top;
+            padding: 80px 20px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 60px 20px;
-            position: relative;
-            z-index: 10;
         }
 
-        .header {
+        /* Hero Section */
+        .hero {
             text-align: center;
-            margin-bottom: 70px;
-            animation: fadeInDown 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 80px;
+            animation: fadeUp 0.8s ease-out forwards;
         }
 
-        .header img {
-            width: 80px;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 20px rgba(50, 108, 229, 0.6));
-            animation: pulseLogo 3s infinite;
+        .hero-badge {
+            display: inline-block;
+            background: rgba(50, 108, 229, 0.1);
+            color: #60a5fa;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: 1px solid rgba(50, 108, 229, 0.2);
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
         }
 
-        @keyframes pulseLogo {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); filter: drop-shadow(0 0 30px rgba(50, 108, 229, 0.9)); }
-        }
-
-        .header h1 {
+        .hero h1 {
             font-size: 4rem;
-            font-weight: 800;
-            background: linear-gradient(to right, #60a5fa, #c084fc, #38bdf8);
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 15px;
-            letter-spacing: -1px;
         }
 
-        .header p {
-            font-size: 1.2rem;
-            color: #94a3b8;
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
             max-width: 600px;
             margin: 0 auto;
+            font-weight: 400;
         }
 
-        /* Dashboard Grid */
+        /* Grid Layout */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-            perspective: 1000px;
+            gap: 24px;
         }
 
-        /* Glassmorphism Cards */
+        /* Premium Cards */
         .card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 30px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
             text-decoration: none;
-            color: #f8fafc;
+            color: inherit;
             display: flex;
             flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: fadeInUp 0.8s backwards;
+            opacity: 0;
+            animation: fadeUp 0.8s ease-out forwards;
         }
 
         .card:nth-child(1) { animation-delay: 0.1s; }
@@ -129,184 +113,196 @@
         .card:nth-child(5) { animation-delay: 0.5s; }
         .card:nth-child(6) { animation-delay: 0.6s; }
 
-        .card:hover {
-            transform: translateY(-10px) rotateX(5deg) rotateY(-5deg);
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(96, 165, 250, 0.5);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(96, 165, 250, 0.1);
-        }
-
-        /* Animated border gradient on hover */
-        .card::after {
+        /* Subtle top glow line */
+        .card::before {
             content: '';
             position: absolute;
-            top: 0; left: -100%;
-            width: 50%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
-            transform: skewX(-20deg);
-            transition: 0.5s;
-        }
-        .card:hover::after {
-            left: 150%;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .badge {
-            align-self: flex-start;
-            background: linear-gradient(135deg, #326CE5 0%, #1e40af 100%);
-            color: #fff;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+        .card:hover {
+            background: var(--card-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(50, 108, 229, 0.4);
+        }
+
+        .module-num {
+            font-family: monospace;
+            font-size: 0.875rem;
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
         }
 
         .card h3 {
             font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 12px;
-            color: #e2e8f0;
-            transition: color 0.3s;
-        }
-
-        .card:hover h3 {
-            color: #38bdf8;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
         }
 
         .card p {
-            color: #94a3b8;
-            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-size: 1rem;
             line-height: 1.6;
             flex-grow: 1;
         }
 
         .card-footer {
-            margin-top: 20px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            font-size: 0.85rem;
-            color: #64748b;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            padding-top: 15px;
-        }
-
-        .card:hover .card-footer {
-            color: #94a3b8;
+            align-items: center;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 500;
         }
 
         .arrow {
-            opacity: 0;
-            transform: translateX(-10px);
-            transition: 0.3s;
-            color: #38bdf8;
+            transition: transform 0.3s ease;
+            color: #60a5fa;
         }
         .card:hover .arrow {
-            opacity: 1;
-            transform: translateX(0);
+            transform: translateX(4px);
         }
 
-        /* Animations */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Locked Card */
+        .card-locked {
+            border-style: dashed;
+            opacity: 0.6;
+            cursor: not-allowed;
         }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(40px); }
+        .card-locked:hover {
+            transform: none;
+            background: var(--card-bg);
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
+        .card-locked::before {
+            display: none;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .footer {
+            margin-top: 100px;
             text-align: center;
-            margin-top: 80px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            color: #64748b;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            padding-top: 40px;
+            border-top: 1px solid var(--border-color);
         }
         .footer span {
-            color: #38bdf8;
-            font-weight: 600;
+            color: var(--text-main);
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
 
-    <!-- Background Orbs -->
-    <div class="bg-orb orb-1"></div>
-    <div class="bg-orb orb-2"></div>
-    <div class="bg-orb orb-3"></div>
-
     <div class="container">
         
-        <!-- Header -->
-        <div class="header">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg" alt="Kubernetes">
-            <h1>Kubernetes Mastery</h1>
-            <p>Visual, Animated, and Interactive Learning Curriculum by Anas Khan.</p>
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="hero-badge">Kubernetes v1.35</div>
+            <h1>Mastery Lab</h1>
+            <p>A completely visual, step-by-step curriculum to master Kubernetes. Built by Anas Khan.</p>
         </div>
 
-        <!-- Grid of Modules -->
+        <!-- Modules Grid -->
         <div class="grid">
             
             <a href="module-0/module-0.html" class="card">
-                <div class="badge">Module 0</div>
+                <div class="card-header">
+                    <span class="module-num">M0</span>
+                </div>
                 <h3>Cluster Setup</h3>
-                <p>Learn how a multi-node Kubernetes cluster is built from scratch using kubeadm, VMs, and control-plane architecture.</p>
+                <p>Environment & multi-node cluster architecture using kubeadm, VMs, and control-plane.</p>
                 <div class="card-footer">
-                    <span>Interactive Flow</span>
-                    <span class="arrow">Explore &rarr;</span>
+                    <span>View Module</span>
+                    <span class="arrow">→</span>
                 </div>
             </a>
 
             <a href="module-1/module-1.html" class="card">
-                <div class="badge">Module 1</div>
+                <div class="card-header">
+                    <span class="module-num">M1</span>
+                </div>
                 <h3>Pods & Deployments</h3>
-                <p>Master the fundamental units of Kubernetes. Understand how Deployments manage ReplicaSets and Pods with zero downtime.</p>
+                <p>Master the fundamental units. Understand how Deployments manage ReplicaSets with zero downtime.</p>
                 <div class="card-footer">
-                    <span>Interactive Flow</span>
-                    <span class="arrow">Explore &rarr;</span>
+                    <span>View Module</span>
+                    <span class="arrow">→</span>
                 </div>
             </a>
 
             <a href="module-2/module-2.html" class="card">
-                <div class="badge">Module 2</div>
+                <div class="card-header">
+                    <span class="module-num">M2</span>
+                </div>
                 <h3>Services & Networking</h3>
-                <p>Discover how traffic routes to Pods via ClusterIP and NodePort. Visualize kube-proxy and Endpoint connections.</p>
+                <p>Discover how traffic routes via ClusterIP and NodePort. Visualize kube-proxy and Endpoints.</p>
                 <div class="card-footer">
-                    <span>Interactive Flow</span>
-                    <span class="arrow">Explore &rarr;</span>
+                    <span>View Module</span>
+                    <span class="arrow">→</span>
                 </div>
             </a>
 
             <a href="module-3/module-3.html" class="card">
-                <div class="badge">Module 3</div>
+                <div class="card-header">
+                    <span class="module-num">M3</span>
+                </div>
                 <h3>Namespaces & Labels</h3>
-                <p>Isolate environments into Dev/Prod rooms. See exactly how Labels filter traffic and Annotations provide metadata.</p>
+                <p>Isolate environments. See exactly how Labels filter traffic and Annotations provide metadata.</p>
                 <div class="card-footer">
-                    <span>Interactive Flow</span>
-                    <span class="arrow">Explore &rarr;</span>
+                    <span>View Module</span>
+                    <span class="arrow">→</span>
                 </div>
             </a>
 
             <a href="module-4/module-4.html" class="card">
-                <div class="badge">Module 4</div>
+                <div class="card-header">
+                    <span class="module-num">M4</span>
+                </div>
                 <h3>ConfigMaps & Secrets</h3>
-                <p>Separate configuration from code. Inject environment variables and securely mount Base64 encoded private passwords.</p>
+                <p>Inject environment variables and securely mount Base64 encoded private passwords into Pods.</p>
                 <div class="card-footer">
-                    <span>Interactive Flow</span>
-                    <span class="arrow">Explore &rarr;</span>
+                    <span>View Module</span>
+                    <span class="arrow">→</span>
                 </div>
             </a>
 
-            <!-- Locked Module Placeholder -->
-            <div class="card" style="opacity: 0.5; cursor: not-allowed; border-style: dashed;">
-                <div class="badge" style="background: #475569;">Module 5</div>
+            <div class="card card-locked">
+                <div class="card-header">
+                    <span class="module-num" style="background: #27272a; color: #71717a;">M5</span>
+                </div>
                 <h3>Health Probes</h3>
-                <p>Liveness, Readiness, and Startup probes. (Pending AI Generation...)</p>
-                <div class="card-footer">
+                <p>Liveness, Readiness, and Startup probes. (Module is currently under construction).</p>
+                <div class="card-footer" style="color: #52525b;">
                     <span>Locked</span>
                     <span>🔒</span>
                 </div>
@@ -315,7 +311,7 @@
         </div>
 
         <div class="footer">
-            Built with 💙 by <span>Anas Khan</span> & AI | 2026
+            Designed by <span>Anas Khan</span> | 2026
         </div>
 
     </div>
