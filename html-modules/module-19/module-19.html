@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 19 — Argo Rollouts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fcf9f2;
+            --border-color: #2c3e50;
+            --k8s-blue: #326ce5;
+            --v1-color: #3b82f6; /* Blue v1 */
+            --v2-color: #10b981; /* Green v2 */
+            --traffic-color: #f59e0b; /* Amber */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--border-color);
+            line-height: 1.6;
+            padding: 40px 20px;
+            background-image: radial-gradient(#e5e0d8 2px, transparent 2px);
+            background-size: 30px 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .module-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .module-header img {
+            width: 80px;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        .module-header h1 {
+            font-size: 2.8rem;
+            color: var(--k8s-blue);
+            text-shadow: 3px 3px 0px var(--border-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 900;
+        }
+        
+        .module-header p {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #4a5568;
+            background: #fff;
+            display: inline-block;
+            padding: 8px 16px;
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+        }
+
+        /* DIAGRAM CONTAINER */
+        .html-diagram {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 500px;
+            margin: 0 auto 40px auto;
+            background: #fff;
+            border: 4px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 8px 8px 0px var(--border-color);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Elements */
+        .gateway {
+            position: absolute;
+            top: 50%; left: 100px;
+            transform: translateY(-50%);
+            width: 160px; height: 160px;
+            background: #fef08a;
+            border: 4px solid var(--traffic-color);
+            border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: 900; z-index: 10;
+            box-shadow: 6px 6px 0px var(--border-color);
+        }
+
+        .split-label {
+            background: #fff;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2px 8px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        .version-box {
+            position: absolute;
+            width: 150px; height: 120px;
+            border: 4px solid var(--border-color);
+            border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 1.2rem;
+            box-shadow: 6px 6px 0px var(--border-color);
+            z-index: 10;
+        }
+
+        .v1 { top: 100px; right: 150px; background: #bfdbfe; color: var(--border-color); }
+        .v2 { bottom: 100px; right: 150px; background: #d1fae5; color: var(--border-color); }
+
+        .traffic-percentage {
+            position: absolute;
+            background: #fff;
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; z-index: 15;
+        }
+        .perc-v1 { top: 140px; left: 420px; color: var(--v1-color); }
+        .perc-v2 { bottom: 140px; left: 420px; color: var(--v2-color); }
+
+        /* SVG Lines */
+        .lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .flow-line { fill: none; stroke: #94a3b8; stroke-width: 4; stroke-dasharray: 8 8; }
+        
+        /* Animated Traffic Packets */
+        .packet { position: absolute; width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--border-color); z-index: 20; }
+        .p-v1 { background: var(--v1-color); animation: toV1 2s infinite linear; }
+        .p-v2 { background: var(--v2-color); animation: toV2 4s infinite linear; } /* Slower, less traffic */
+
+        @keyframes toV1 { 0% { top: 250px; left: 260px; opacity: 1; } 50% { top: 160px; left: 450px; } 100% { top: 160px; left: 600px; opacity: 0; } }
+        @keyframes toV2 { 0% { top: 250px; left: 260px; opacity: 1; } 50% { top: 340px; left: 450px; } 100% { top: 340px; left: 600px; opacity: 0; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* INFO CARD GRID */
+        .info-text-grid { display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 40px; }
+        .info-card { background: #fff; border: 3px solid var(--border-color); border-radius: 12px; padding: 25px; box-shadow: 6px 6px 0px var(--border-color); transition: transform 0.2s; }
+        .info-card:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0px var(--border-color); }
+        .info-card h2 { font-size: 1.5rem; margin-bottom: 15px; color: var(--k8s-blue); display: flex; align-items: center; gap: 10px; font-weight: 900; }
+        .info-card h2 span { background: var(--k8s-blue); color: #fff; width: 30px; height: 30px; display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; font-size: 1.1rem; border: 2px solid var(--border-color); }
+        .info-card ul, .info-card ol { padding-left: 20px; }
+        .info-card li { margin-bottom: 12px; font-weight: 600; font-size: 1.05rem; }
+        .info-card li::before { content: "✦ "; color: var(--k8s-blue); font-weight: bold; display: inline-block; margin-left: -20px; width: 20px; }
+        code { background: #f1f5f9; color: #ef4444; padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1; font-family: monospace; font-weight: bold; }
+        .footer-signature { text-align: center; margin-top: 60px; font-weight: 800; color: #64748b; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="module-header">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg" alt="K8s Logo">
+        <h1>Module 19: Argo Rollouts</h1>
+        <p>Progressive Delivery (Canary & Blue-Green)</p>
+    </div>
+
+    <!-- DIAGRAM CONTAINER -->
+    <div class="html-diagram">
+        
+        <svg class="lines" viewBox="0 0 900 500">
+            <!-- Gateway to v1 -->
+            <path class="flow-line" d="M 260 250 Q 400 160 600 160" />
+            <!-- Gateway to v2 -->
+            <path class="flow-line" d="M 260 250 Q 400 340 600 340" />
+        </svg>
+
+        <div class="packet p-v1"></div>
+        <div class="packet p-v2"></div>
+
+        <div class="gateway">
+            Gateway API<br>
+            <span style="font-size:0.7rem;">(Traffic Router)</span>
+            <div class="split-label">Splitting Traffic</div>
+        </div>
+
+        <div class="traffic-percentage perc-v1">90%</div>
+        <div class="traffic-percentage perc-v2">10%</div>
+
+        <div class="version-box v1">
+            Version 1<br>
+            <span style="font-size:0.8rem; font-weight:normal;">(Stable / Blue)</span>
+        </div>
+
+        <div class="version-box v2">
+            Version 2<br>
+            <span style="font-size:0.8rem; font-weight:normal;">(Canary / Green)</span>
+        </div>
+
+    </div>
+
+    <!-- INFO CARD GRID -->
+    <div class="info-text-grid">
+        
+        <!-- Analogy -->
+        <div class="info-card">
+            <h2><span>1</span> Analogy (Samajhne ke liye)</h2>
+            <p><strong>Blue-Green:</strong> Stage par 2 bilkul same setups hain (Blue aur Green). Pehle Blue par performance ho rahi hai. Phir achanak se light (traffic) Green par switch kar di jati hai. (Instant Switch).</p>
+            <p><strong>Canary:</strong> Ek naya show shuru hua hai, pehle sirf thori si audience (10%) ko andar bhej kar dekhte hain ke unhe pasand aaya ya nahi. Agar theek hai, toh baqi 90% ko bhi bhej dete hain.</p>
+        </div>
+
+        <!-- Concept -->
+        <div class="info-card">
+            <h2><span>2</span> Core Concepts</h2>
+            <ul>
+                <li><strong>Rollout CRD:</strong> Standard <code>Deployment</code> ki jagah hum Argo ka <code>Rollout</code> object use karte hain. Yeh boht smart hota hai.</li>
+                <li><strong>Canary Analysis:</strong> Argo Rollouts check kar sakta hai ke naye version (v2) par kitne errors aa rahe hain. Agar errors ziada hon, toh bina kisi insaan ke khud ba khud rollback (v1 par wapas) kar deta hai!</li>
+                <li><strong>Integration:</strong> Yeh Gateway API ya Ingress ke sath mil kar traffic ko exactly 10%, 20% par split karta hai.</li>
+            </ul>
+        </div>
+
+        <!-- Hands-on -->
+        <div class="info-card">
+            <h2><span>3</span> Hands-on Steps</h2>
+            <ol>
+                <li>Apni app ki purani <code>kind: Deployment</code> ko <code>kind: Rollout</code> mein convert karein.</li>
+                <li><strong>Blue-Green Test:</strong> Naya version deploy karein. Pehle wo ek "preview" URL par khulega. Verify karne ke baad promote karein toh live traffic foran naye par chala jayega.</li>
+                <li><strong>Canary Test:</strong> Steps define karein: 10% traffic → pause → 30% traffic → pause → 100%.</li>
+                <li>Ek AnalysisTemplate lagayen, naye version ko jan boojh kar error throw karne wala banayen, aur dekhein Argo auto-rollback karta hai ya nahi.</li>
+            </ol>
+        </div>
+
+        <!-- Errors -->
+        <div class="info-card">
+            <h2><span>4</span> Errors to Break + Fix</h2>
+            <ul>
+                <li><strong>Stuck Rollout:</strong> Agar analysis fail ho jaye ya aap pause ko unpause (promote) karna bhool jayen, toh rollout hamesha "Paused" state mein phansa rehta hai.</li>
+                <li><strong>Traffic not splitting:</strong> Agar aapne Rollout ke andar Gateway / HTTPRoute ka naam ghalat likh diya, toh traffic 100% v1 par hi rahega.</li>
+            </ul>
+        </div>
+
+        <!-- Best Practices -->
+        <div class="info-card">
+            <h2><span>5</span> Best Practices (Pro Tips)</h2>
+            <ul>
+                <li>Hamesha <strong>Analysis + Auto-Rollback</strong> define karein. Raat ko 3 baje release ho aur phat jaye toh Argo khud sambhal le.</li>
+                <li>Canary ke steps ke darmiyan "Bake time" (intezar ka waqt) short rakhein (e.g. 2-5 mins) taake deployment boht lamba na ho.</li>
+                <li>Rollouts ko <strong>HPA</strong> (Horizontal Pod Autoscaler) aur <strong>PDB</strong> (Pod Disruption Budget) ke sath laazmi link karein.</li>
+            </ul>
+        </div>
+
+        <!-- Done Check -->
+        <div class="info-card">
+            <h2><span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: -4px;"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Done-Check</h2>
+            <ul>
+                <li>Canary aur Blue-Green dono strategies test ho gayin, aur ek fail hone wala canary khud-ba-khud (auto) rollback ho gaya!</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="footer-signature">
+        <svg style="vertical-align: middle; margin-right: 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Anas Khan | 
+        <svg style="vertical-align: middle; margin: 0 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> anas.devops@hotmail.com | 
+        <svg style="vertical-align: middle; margin: 0 5px;" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg> devanaskhanops
+    </div>
+
+</div>
+
+</body>
+</html>
