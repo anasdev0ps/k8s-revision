@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 4: ConfigMaps & Secrets</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #fcf9f2;
+            color: #333;
+            margin: 0;
+            padding: 40px;
+            line-height: 1.8;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            border-bottom: 2px solid #8fc1e3;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #4a6fa5;
+            margin-top: 40px;
+        }
+        .analogy {
+            font-style: italic;
+            font-size: 1.2em;
+            color: #555;
+            border-left: 4px solid #f29c9f;
+            padding-left: 20px;
+            margin: 20px 0;
+        }
+        .badge {
+            display: inline-block;
+            background-color: #e0f7fa;
+            color: #006064;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* --- PURE HTML/CSS DIAGRAM --- */
+        .html-diagram {
+            width: 100%;
+            height: 500px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
+            margin: 30px 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Nodes */
+        .diagram-node {
+            position: absolute;
+            background: #ffffff;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 13px;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 160px; /* Fixed width to prevent squashing */
+        }
+        
+        .diagram-node img {
+            display: block;
+            object-fit: contain;
+        }
+
+        /* Positions */
+        .node-configmap { left: 20%; top: 25%; transform: translate(-50%, -50%); border-left: 5px solid #f59e0b;}
+        .node-secret { left: 20%; top: 75%; transform: translate(-50%, -50%); border-left: 5px solid #ef4444;}
+        .node-pod { right: 20%; top: 50%; transform: translate(50%, -50%); border-left: 5px solid #3b82f6;}
+
+        /* Data representation blocks inside nodes */
+        .data-block {
+            font-family: 'Courier New', monospace;
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 10px;
+            padding: 5px;
+            border-radius: 4px;
+            width: 100%;
+            text-align: left;
+            margin-top: 5px;
+        }
+        .data-secret {
+            background: #fef2f2;
+            color: #b91c1c;
+            filter: blur(1.5px); /* Visual effect for "secret" */
+            transition: 0.3s;
+        }
+        .data-secret:hover {
+            filter: blur(0);
+        }
+
+        /* SVG Lines */
+        .flow-line {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .connection-cm {
+            stroke: #f59e0b;
+            stroke-width: 2.5;
+            stroke-dasharray: 6;
+            fill: none;
+            animation: dash 8s linear infinite;
+        }
+        .connection-secret {
+            stroke: #ef4444;
+            stroke-width: 2.5;
+            stroke-dasharray: 6;
+            fill: none;
+            animation: dash 8s linear infinite;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: -100; }
+        }
+
+        /* Flow Texts */
+        .flow-text {
+            position: absolute;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            background: #fff;
+            padding: 5px 10px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            z-index: 50; /* ALWAYS on top */
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+        }
+        .text-cm-flow {
+            left: 50%; top: 37%;
+            color: #d97706;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
+        }
+        .text-secret-flow {
+            left: 50%; top: 63%;
+            color: #b91c1c;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
+        }
+
+        /* Info Text Outside */
+        .info-text {
+            width: 100%;
+            text-align: center;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px;
+            color: #475569;
+            background: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            box-sizing: border-box;
+        }
+
+        /* Other sections */
+        .error-section {
+            background-color: #fff0f0;
+            border-left: 4px solid #ff7b7b;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        .best-practice {
+            background-color: #f0fdf4;
+            border-left: 4px solid #6ee7b7;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        
+        .footer-signature {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #555;
+            font-size: 1.1em;
+            flex-wrap: wrap;
+        }
+        .signature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="badge">Module 4</div>
+    <h1>ConfigMaps & Secrets</h1>
+    
+    <div class="content">
+        <p>Har application ko chalne ke liye kuch settings (jaise PORT number) aur kuch passwords (jaise Database password) chahiye hote hain. Agar hum inhein code ke andar likh dein (hardcode kar dein), toh har environment ke liye naya code likhna padega. Kubernetes in settings ko app se alag karne ke liye **ConfigMaps** aur **Secrets** use karta hai.</p>
+
+        <!-- HTML/CSS EXPLANATORY ANIMATED DIAGRAM -->
+        <div class="html-diagram">
+            
+            <!-- Connection Lines -->
+            <svg class="flow-line" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <!-- Line from CM (20, 25) to Pod (80, 50) -->
+                <path class="connection-cm" d="M 20 25 L 80 50" />
+                <!-- Line from Secret (20, 75) to Pod (80, 50) -->
+                <path class="connection-secret" d="M 20 75 L 80 50" />
+            </svg>
+
+            <!-- Flow Explanation Texts -->
+            <div class="flow-text text-cm-flow">
+                ⏩ Env Vars ban kar Pod mein ja raha hai
+            </div>
+            <div class="flow-text text-secret-flow">
+                🔒 Mount ho kar secure file ban raha hai
+            </div>
+
+            <!-- ConfigMap Node -->
+            <div class="diagram-node node-configmap">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg" alt="Kubernetes Logo" width="40" style="height: auto;">
+                <div>
+                    <strong>ConfigMap</strong><br>
+                    <small style="color: #666;">(Public Settings)</small>
+                </div>
+                <div class="data-block">
+                    PORT=3000<br>ENV=prod
+                </div>
+            </div>
+
+            <!-- Secret Node -->
+            <div class="diagram-node node-secret">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg" alt="Kubernetes Logo" width="40" style="height: auto;">
+                <div>
+                    <strong>Secret</strong><br>
+                    <small style="color: #666;">(Private Passwords)</small>
+                </div>
+                <div class="data-block data-secret">
+                    DB_PASS=cGFzc3dvcmQ=
+                </div>
+            </div>
+
+            <!-- Pod Node -->
+            <div class="diagram-node node-pod">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Docker_%28container_engine%29_logo.svg" alt="Docker Logo" width="60" style="height: auto;">
+                <div>
+                    <strong>Application Pod</strong><br>
+                    <small style="color: #666;">(Node.js API)</small>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- OUTSIDE INFO TEXT (Rule enforced) -->
+        <div class="info-text">
+            <strong>Animation Guide:</strong> Left side par <code>ConfigMap</code> (normal settings) aur <code>Secret</code> (locked/encoded passwords) hain. Yeh dono data alag alag tareeqon se <strong>Pod</strong> ke andar bheje ja rahe hain. (Hint: Secret wale text par mouse hover karke dekhein!)
+        </div>
+
+        <div class="analogy">
+            <strong>Analogy:</strong><br>
+            - <strong>ConfigMap:</strong> Office ke notice board par lagi <em>Sticky Note</em>, jo koi bhi padh sakta hai (e.g., Office timings).<br>
+            - <strong>Secret:</strong> Manager ki table ke locked <em>Drawer</em> mein rakha hua document (e.g., WiFi password).
+        </div>
+
+        <h2>Hum Kya Seekhenge (Concepts)</h2>
+        <ul>
+            <li><strong>ConfigMap:</strong> Non-confidential data (jaise URLs, ports, toggle flags) ko store karne ka tareeqa.</li>
+            <li><strong>Secret:</strong> Confidential data (jaise passwords, tokens, SSH keys) ko Base64 mein encode kar ke store karna.</li>
+            <li><strong>Injection Methods:</strong> Data ko Pod mein as an <em>Environment Variable</em> (<code>envFrom</code>) dalna ya as a <em>File</em> (Volume mount) lagana.</li>
+            <li><strong>Base64 vs Encryption:</strong> Yaad rakhein ke default Kubernetes Secrets encrypted nahi hote, sirf Base64 encoded (scrambled) hote hain!</li>
+        </ul>
+
+        <h2>Hands-on Steps</h2>
+        <ol>
+            <li>Ek ConfigMap banayen: <code>kubectl create configmap app-config --from-literal=PORT=3000</code>.</li>
+            <li>Ek Secret banayen: <code>kubectl create secret generic db-pass --from-literal=password=mysecret</code>.</li>
+            <li>Deployment YAML mein ConfigMap ko as Environment Variable (<code>env</code>) mount karein.</li>
+            <li>Deployment YAML mein Secret ko as a File (<code>volumeMount</code>) attach karein.</li>
+            <li>ConfigMap ki value update karke dekhein ke pod usey foran pick karta hai ya restart ki zaroorat hoti hai.</li>
+        </ol>
+
+        <div class="error-section">
+            <h3>Errors (Jo hum break karke fix karenge)</h3>
+            <p>Hum jaan boojh kar in issues ko create aur fix karenge:</p>
+            <ul>
+                <li><strong>Missing Key/ConfigMap:</strong> Agar hum YAML mein aisa ConfigMap maangein jo banaya hi nahi, toh Pod <code>CreateContainerConfigError</code> state mein phans jata hai.</li>
+                <li><strong>Secret not mounted:</strong> Agar app password dhoond raha hai aur file mount nahi hui, toh application 500 Server Error deti hai.</li>
+            </ul>
+        </div>
+
+        <div class="best-practice">
+            <h3>Best Practices</h3>
+            <ul>
+                <li><strong>CRITICAL:</strong> Plaintext Secrets kabhi bhi apne Git repository mein commit na karein!</li>
+                <li>Hamesha "Sealed Secrets" ya "External Secrets Operator" (jaise AWS Secrets Manager ya HashiCorp Vault) use karein production ke liye.</li>
+                <li>Kubernetes cluster par <em>etcd encryption-at-rest</em> enable karein taake data hard-drive par bhi secure rahay.</li>
+            </ul>
+        </div>
+
+        <h2>Done-Check</h2>
+        <p>Yeh module tab complete hoga jab aapka app safely ConfigMap se port aur Secret se database password read kar lega aur successfully chal parega.</p>
+    </div>
+
+    <div class="footer-signature">
+        <div class="signature-item">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="#555">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+            </svg>
+            <strong>Anas Khan</strong>
+        </div>
+        <div class="signature-item">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="#555">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            anas.devops@hotmail.com
+        </div>
+        <div class="signature-item">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="#0077b5">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+            devanaskhanops
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
