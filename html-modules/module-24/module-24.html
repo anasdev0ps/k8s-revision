@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 24 — Interview Prep</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fcf9f2;
+            --border-color: #2c3e50;
+            --k8s-blue: #326ce5;
+            --gold-color: #f59e0b; /* Amber */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--border-color);
+            line-height: 1.6;
+            padding: 40px 20px;
+            background-image: radial-gradient(#e5e0d8 2px, transparent 2px);
+            background-size: 30px 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .module-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .module-header img {
+            width: 80px;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        .module-header h1 {
+            font-size: 2.8rem;
+            color: var(--k8s-blue);
+            text-shadow: 3px 3px 0px var(--border-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 900;
+        }
+        
+        .module-header p {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #4a5568;
+            background: #fff;
+            display: inline-block;
+            padding: 8px 16px;
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+        }
+
+        /* DIAGRAM CONTAINER */
+        .html-diagram {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 500px;
+            margin: 0 auto 40px auto;
+            background: #fff;
+            border: 4px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 8px 8px 0px var(--border-color);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Elements */
+        .brain {
+            position: absolute;
+            top: 50%; left: 150px;
+            transform: translateY(-50%);
+            width: 160px; height: 160px;
+            background: #fbcfe8;
+            border: 4px solid var(--border-color);
+            border-radius: 50%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 1.2rem;
+            box-shadow: 6px 6px 0px var(--border-color);
+            z-index: 10;
+            animation: pulse 3s infinite;
+        }
+
+        .certificate {
+            position: absolute;
+            top: 50%; right: 150px;
+            transform: translateY(-50%);
+            width: 180px; height: 220px;
+            background: #fef08a;
+            border: 4px solid var(--gold-color);
+            border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            padding-top: 25px; font-weight: 900; font-size: 1.2rem;
+            box-shadow: 6px 6px 0px var(--border-color);
+            z-index: 10;
+        }
+
+        .ribbon {
+            width: 60px; height: 60px;
+            background: var(--gold-color);
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            margin-top: 30px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1.5rem;
+        }
+
+        .sparkle {
+            position: absolute; width: 10px; height: 10px; background: var(--gold-color); border-radius: 50%;
+            animation: twinkle 1s infinite alternate;
+        }
+        .s1 { top: 120px; right: 120px; }
+        .s2 { top: 320px; right: 140px; }
+        .s3 { top: 180px; right: 350px; }
+
+        /* SVG Lines */
+        .lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .flow-line { fill: none; stroke: var(--border-color); stroke-width: 4; stroke-dasharray: 8 8; animation: dashMove 2s linear infinite; }
+
+        .knowledge-text {
+            position: absolute;
+            top: 220px; left: 390px;
+            background: #fff;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 5px 15px;
+            font-weight: 900;
+        }
+
+        @keyframes dashMove { to { stroke-dashoffset: -100; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse { 0%, 100% { transform: translateY(-50%) scale(1); } 50% { transform: translateY(-50%) scale(1.05); } }
+        @keyframes twinkle { from { opacity: 0.2; transform: scale(0.8); } to { opacity: 1; transform: scale(1.2); } }
+
+        /* INFO CARD GRID */
+        .info-text-grid { display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 40px; }
+        .info-card { background: #fff; border: 3px solid var(--border-color); border-radius: 12px; padding: 25px; box-shadow: 6px 6px 0px var(--border-color); transition: transform 0.2s; }
+        .info-card:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0px var(--border-color); }
+        .info-card h2 { font-size: 1.5rem; margin-bottom: 15px; color: var(--k8s-blue); display: flex; align-items: center; gap: 10px; font-weight: 900; }
+        .info-card h2 span { background: var(--k8s-blue); color: #fff; width: 30px; height: 30px; display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; font-size: 1.1rem; border: 2px solid var(--border-color); }
+        .info-card ul, .info-card ol { padding-left: 20px; }
+        .info-card li { margin-bottom: 12px; font-weight: 600; font-size: 1.05rem; }
+        .info-card li::before { content: "✦ "; color: var(--k8s-blue); font-weight: bold; display: inline-block; margin-left: -20px; width: 20px; }
+        code { background: #f1f5f9; color: #ef4444; padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1; font-family: monospace; font-weight: bold; }
+        
+        .interview-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95rem; }
+        .interview-table th, .interview-table td { border: 2px solid var(--border-color); padding: 12px; text-align: left; }
+        .interview-table th { background: var(--k8s-blue); color: #fff; font-weight: 900; }
+        .interview-table td { font-weight: 700; color: #334155; }
+        .interview-table tr:nth-child(even) { background: #f8fafc; }
+
+        .footer-signature { text-align: center; margin-top: 60px; font-weight: 800; color: #64748b; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="module-header">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg" alt="K8s Logo">
+        <h1>Module 24: Interview Prep</h1>
+        <p>Best-Practices Consolidation</p>
+    </div>
+
+    <!-- DIAGRAM CONTAINER -->
+    <div class="html-diagram">
+        
+        <svg class="lines" viewBox="0 0 900 500">
+            <!-- Brain to Certificate -->
+            <path class="flow-line" d="M 310 250 L 720 250" />
+        </svg>
+
+        <div class="sparkle s1"></div>
+        <div class="sparkle s2"></div>
+        <div class="sparkle s3"></div>
+
+        <div class="knowledge-text">Experience & Practice</div>
+
+        <div class="brain">
+            🧠<br>Your Brain<br>
+            <span style="font-size:0.7rem; font-weight:normal;">(Full of K8s Knowledge)</span>
+        </div>
+
+        <div class="certificate">
+            Job Ready!<br>
+            <div class="ribbon">⭐</div>
+        </div>
+
+    </div>
+
+    <!-- INFO CARD GRID -->
+    <div class="info-text-grid">
+        
+        <!-- Analogy -->
+        <div class="info-card">
+            <h2><span>1</span> Analogy (Samajhne ke liye)</h2>
+            <p><strong>Interview Prep:</strong> Yeh aapki final cheat-sheet hai. Jab aap interview table par baithte hain, toh interviewer aapse maslay (Cases) poochta hai. Agar aapka dimagh har masle ka fauri Action bata de, toh naukri pakki!</p>
+        </div>
+
+        <!-- Concept -->
+        <div class="info-card">
+            <h2><span>2</span> The Master Cheat Sheet (Case ➜ Action)</h2>
+            <p>Ye table hamesha yaad rakhein, ye real-world production issues ka nichor hai:</p>
+            
+            <table class="interview-table">
+                <tr>
+                    <th>Real-World Case (Masla)</th>
+                    <th>Action (Hal)</th>
+                </tr>
+                <tr>
+                    <td>Pod phansa hua hai (<code>Pending</code>)</td>
+                    <td>Check <code>describe</code> events ➜ verify resources/taints/PVC.</td>
+                </tr>
+                <tr>
+                    <td>App ko traffic nahi mil raha</td>
+                    <td>Check Readiness probe ➜ verify Service Endpoints.</td>
+                </tr>
+                <tr>
+                    <td>Zero-downtime release karni hai</td>
+                    <td>Blue-green (instant) or Canary (gradual) via <strong>Argo Rollouts</strong>.</td>
+                </tr>
+                <tr>
+                    <td>ConfigMap change kiya par pod purana hai</td>
+                    <td><code>kubectl rollout restart</code> ➜ ya checksum annotation use karein.</td>
+                </tr>
+                <tr>
+                    <td>Production changes auditable honi chahiye</td>
+                    <td>Strict <strong>GitOps (ArgoCD)</strong> ➜ Koi manual `kubectl` allow na ho.</td>
+                </tr>
+                <tr>
+                    <td>Same artifact sab environments mein chalana hai</td>
+                    <td>Promote Freight via <strong>Kargo</strong> ➜ (Dobara image build mat karein).</td>
+                </tr>
+                <tr>
+                    <td>External IP <code>&lt;pending&gt;</code> hai (Bare-metal par)</td>
+                    <td><strong>MetalLB</strong> IP pool aur L2 advertisement check karein.</td>
+                </tr>
+                <tr>
+                    <td>ingress-nginx purana ho gaya hai</td>
+                    <td>Modern <strong>Gateway API</strong> (Gateway + HTTPRoute) par migrate karein.</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Best Practices -->
+        <div class="info-card">
+            <h2><span>3</span> Quick Reference (Triage Order)</h2>
+            <p>Kisi bhi tootay hue pod ke liye hamesha ye commands is tarteeb se chalayen:</p>
+            <ol>
+                <li><code>kubectl get pods -A</code> (Check status)</li>
+                <li><code>kubectl describe pod &lt;pod&gt; -n &lt;ns&gt;</code> (Check events & config)</li>
+                <li><code>kubectl logs &lt;pod&gt; -n &lt;ns&gt; [--previous]</code> (Check application errors)</li>
+                <li><code>kubectl get events -n &lt;ns&gt; --sort-by=.lastTimestamp</code> (Check cluster level issues)</li>
+                <li><code>kubectl get pod &lt;pod&gt; -o yaml</code> (Check exact running config)</li>
+            </ol>
+        </div>
+
+        <!-- Done Check -->
+        <div class="info-card">
+            <h2><span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: -4px;"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Done-Check</h2>
+            <ul>
+                <li><strong>Congratulations!</strong> Aapne Kubernetes ki bunyaadi concepts se le kar advanced GitOps, Observability, aur Progressive Delivery tak sab cover kar liya hai. Aap ab ek Kubernetes Master hain! 🎉</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="footer-signature">
+        <svg style="vertical-align: middle; margin-right: 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Anas Khan | 
+        <svg style="vertical-align: middle; margin: 0 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> anas.devops@hotmail.com | 
+        <svg style="vertical-align: middle; margin: 0 5px;" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg> devanaskhanops
+    </div>
+
+</div>
+
+</body>
+</html>
