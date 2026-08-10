@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 12 — Gateway API</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fcf9f2;
+            --border-color: #2c3e50;
+            --k8s-blue: #326ce5;
+            --gw-color: #f59e0b; /* Amber */
+            --route-color: #10b981; /* Green */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--border-color);
+            line-height: 1.6;
+            padding: 40px 20px;
+            background-image: radial-gradient(#e5e0d8 2px, transparent 2px);
+            background-size: 30px 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .module-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .module-header img {
+            width: 80px;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        .module-header h1 {
+            font-size: 2.8rem;
+            color: var(--k8s-blue);
+            text-shadow: 3px 3px 0px var(--border-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 900;
+        }
+        
+        .module-header p {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #4a5568;
+            background: #fff;
+            display: inline-block;
+            padding: 8px 16px;
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+        }
+
+        /* DIAGRAM CONTAINER */
+        .html-diagram {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 550px;
+            margin: 0 auto 40px auto;
+            background: #fff;
+            border: 4px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 8px 8px 0px var(--border-color);
+            overflow: hidden;
+        }
+
+        /* Elements */
+        .user-traffic {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #cbd5e1;
+            border: 3px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 900;
+            z-index: 10;
+        }
+
+        .gateway {
+            position: absolute;
+            top: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            background: #fef08a;
+            border: 4px solid var(--gw-color);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            font-weight: 900;
+            box-shadow: 6px 6px 0px var(--border-color);
+            z-index: 10;
+        }
+
+        .http-route {
+            position: absolute;
+            top: 280px;
+            background: #d1fae5;
+            border: 3px dashed var(--route-color);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            font-weight: 900;
+            font-size: 0.9rem;
+            z-index: 15;
+            box-shadow: 4px 4px 0px var(--border-color);
+        }
+
+        .route-path { left: 200px; }
+        .route-host { right: 200px; }
+
+        .service {
+            position: absolute;
+            bottom: 40px;
+            width: 120px;
+            background: #bfdbfe;
+            border: 4px solid var(--k8s-blue);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            font-weight: 900;
+            box-shadow: 6px 6px 0px var(--border-color);
+            z-index: 10;
+        }
+
+        .svc-a { left: 100px; }
+        .svc-b { left: 300px; }
+        .svc-blue { right: 300px; }
+        .svc-green { right: 100px; }
+
+        /* Flow Indicators */
+        .packet {
+            position: absolute;
+            width: 20px; height: 20px;
+            background: #ef4444;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            z-index: 20;
+        }
+
+        .p1 { animation: p1Move 4s infinite linear; }
+        .p2 { background: #3b82f6; animation: p2Move 4s infinite linear; animation-delay: 1s; }
+        .p3 { background: #10b981; animation: p3Move 4s infinite linear; animation-delay: 2s; }
+
+        /* SVG Lines */
+        .lines {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+        .flow-line {
+            fill: none;
+            stroke: #94a3b8;
+            stroke-width: 4;
+            stroke-dasharray: 8 8;
+        }
+
+        @keyframes p1Move {
+            0% { top: 70px; left: 450px; opacity: 1; }
+            20% { top: 150px; left: 450px; opacity: 1; }
+            40% { top: 220px; left: 250px; opacity: 1; }
+            60% { top: 350px; left: 250px; opacity: 1; }
+            80% { top: 430px; left: 160px; opacity: 1; }
+            100% { top: 430px; left: 160px; opacity: 0; }
+        }
+        @keyframes p2Move {
+            0% { top: 70px; left: 450px; opacity: 1; }
+            20% { top: 150px; left: 450px; opacity: 1; }
+            40% { top: 220px; left: 650px; opacity: 1; }
+            60% { top: 350px; left: 650px; opacity: 1; }
+            80% { top: 430px; left: 740px; opacity: 1; }
+            100% { top: 430px; left: 740px; opacity: 0; }
+        }
+        @keyframes p3Move {
+            0% { top: 70px; left: 450px; opacity: 1; }
+            20% { top: 150px; left: 450px; opacity: 1; }
+            40% { top: 220px; left: 650px; opacity: 1; }
+            60% { top: 350px; left: 650px; opacity: 1; }
+            80% { top: 430px; left: 540px; opacity: 1; }
+            100% { top: 430px; left: 540px; opacity: 0; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* INFO CARD GRID */
+        .info-text-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-top: 40px;
+        }
+        .info-card {
+            background: #fff;
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 6px 6px 0px var(--border-color);
+            transition: transform 0.2s;
+        }
+        .info-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0px var(--border-color);
+        }
+        .info-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--k8s-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 900;
+        }
+        .info-card h2 span {
+            background: var(--k8s-blue);
+            color: #fff;
+            width: 30px; height: 30px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            border: 2px solid var(--border-color);
+        }
+        .info-card ul, .info-card ol {
+            padding-left: 20px;
+        }
+        .info-card li {
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+        .info-card li::before {
+            content: "✦ ";
+            color: var(--k8s-blue);
+            font-weight: bold;
+            display: inline-block;
+            margin-left: -20px;
+            width: 20px;
+        }
+        code {
+            background: #f1f5f9;
+            color: #ef4444;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #cbd5e1;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        .footer-signature {
+            text-align: center;
+            margin-top: 60px;
+            font-weight: 800;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="module-header">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg" alt="K8s Logo">
+        <h1>Module 12: Gateway API</h1>
+        <p>The Modern, Prod-Grade Routing</p>
+    </div>
+
+    <!-- DIAGRAM CONTAINER -->
+    <div class="html-diagram">
+        
+        <svg class="lines" viewBox="0 0 900 550">
+            <!-- User to Gateway -->
+            <path class="flow-line" d="M 450 80 L 450 150" />
+            <!-- Gateway to Path Routes -->
+            <path class="flow-line" d="M 450 200 L 250 280" />
+            <path class="flow-line" d="M 450 200 L 650 280" />
+            
+            <!-- Path Routes to Services -->
+            <path class="flow-line" d="M 250 330 L 160 450" />
+            <path class="flow-line" d="M 250 330 L 360 450" />
+
+            <!-- Host Routes to Services -->
+            <path class="flow-line" d="M 650 330 L 540 450" />
+            <path class="flow-line" d="M 650 330 L 740 450" />
+        </svg>
+
+        <!-- Packets -->
+        <div class="packet p1"></div>
+        <div class="packet p2"></div>
+        <div class="packet p3"></div>
+
+        <div class="user-traffic">
+            User Traffic<br>
+            <span style="font-size:0.8rem;">(HTTP/HTTPS)</span>
+        </div>
+
+        <div class="gateway">
+            Gateway<br>
+            <span style="font-size: 0.8rem;">(The Main Door)</span>
+        </div>
+
+        <div class="http-route route-path">
+            HTTPRoute<br>
+            <span style="font-size: 0.7rem;">(Path-based)</span><br>
+            <code>/app1</code> <code>/app2</code>
+        </div>
+
+        <div class="http-route route-host">
+            HTTPRoute<br>
+            <span style="font-size: 0.7rem;">(Host-based)</span><br>
+            <code>blue.com</code> <code>green.com</code>
+        </div>
+
+        <div class="service svc-a">svc-app1</div>
+        <div class="service svc-b">svc-app2</div>
+        <div class="service svc-blue">svc-blue</div>
+        <div class="service svc-green">svc-green</div>
+
+    </div>
+
+    <!-- INFO CARD GRID -->
+    <div class="info-text-grid">
+        
+        <!-- Analogy -->
+        <div class="info-card">
+            <h2><span>1</span> Analogy (Samajhne ke liye)</h2>
+            <p><strong>GatewayClass:</strong> "The type of gate" (kya yeh lakri ka darwaza hai ya lohe ka? e.g. Traefik ya Envoy).</p>
+            <p><strong>Gateway:</strong> "The actual gate/door" (kahan laga hua hai aur kounsa tala (port/TLS) hai).</p>
+            <p><strong>HTTPRoute:</strong> "The sign board" jo visitor ko batata hai ke "Agar /app1 jana hai toh is raste par jao".</p>
+        </div>
+
+        <!-- Concept -->
+        <div class="info-card">
+            <h2><span>2</span> Core Concepts</h2>
+            <ul>
+                <li><strong>Ingress-nginx is retiring:</strong> Purana Ingress object out-date ho raha hai, ab modern tareeqa **Gateway API** hai.</li>
+                <li><strong>Gateway API Implementations:</strong> Traefik, Envoy Gateway, ya NGINX Gateway Fabric me se koi ek install karna parta hai.</li>
+                <li><strong>Separation of Duties:</strong> Platform team sirf <code>Gateway</code> (door) banati hai, aur App developers apne apne <code>HTTPRoute</code> (signs) banatay hain. Yeh purane Ingress se boht secure aur clean tareeqa hai.</li>
+            </ul>
+        </div>
+
+        <!-- Hands-on -->
+        <div class="info-card">
+            <h2><span>3</span> Hands-on Steps (Every Routing Type)</h2>
+            <ol>
+                <li><strong>Path-based:</strong> Request agar <code>/app1</code> aaye toh Service A ko bhejo, <code>/app2</code> aaye toh Service B.</li>
+                <li><strong>Host-based:</strong> Agar traffic <code>blue.duckdns.org</code> se aaye toh Blue app, agar <code>green.duckdns.org</code> aaye toh Green app. (Ye Blue-Green deployments ke liye prep hai).</li>
+                <li><strong>Weighted / Traffic Split:</strong> 90% traffic v1 par bhejo, aur 10% naye v2 (Canary) par.</li>
+                <li><strong>TLS termination:</strong> cert-manager aur Let's Encrypt ke zariye real domain par HTTPS enabled karein.</li>
+            </ol>
+        </div>
+
+        <!-- Errors -->
+        <div class="info-card">
+            <h2><span>4</span> Errors to Break + Fix</h2>
+            <ul>
+                <li><strong>502/503 (Bad Gateway):</strong> Agar backend (Service ya Pod) down ho, ya HTTPRoute mein ghalat port likha ho.</li>
+                <li><strong>Wrong `parentRef`:</strong> Agar HTTPRoute ne <code>Gateway</code> ka naam ghalat likha ho toh traffic attach nahi hoga.</li>
+                <li><strong>Cert not ready:</strong> Agar Let's Encrypt TLS certificate issue hone mein time lagaye toh HTTPS error aayega.</li>
+            </ul>
+        </div>
+
+        <!-- Best Practices -->
+        <div class="info-card">
+            <h2><span>5</span> Best Practices (Pro Tips)</h2>
+            <ul>
+                <li>Naye Kubernetes projects mein hamesha <strong>Gateway API</strong> use karein bajaye Ingress ke.</li>
+                <li><strong>RBAC (Role-Based Access Control)</strong> use kar ke developers ko sirf <code>HTTPRoute</code> create karne ki permission dein, <code>Gateway</code> create karne ki nahi.</li>
+                <li>Certs ko hamesha <code>cert-manager</code> ke zariye automate karein.</li>
+            </ul>
+        </div>
+
+        <!-- Done Check -->
+        <div class="info-card">
+            <h2><span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: -4px;"><polyline points="20 6 9 17 4 12"></polyline></svg></span> Done-Check</h2>
+            <ul>
+                <li>Tamam routing types (Path, Host, Split) test ho chuki hain, aur HTTPS real domain par successfully kaam kar raha hai!</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="footer-signature">
+        <svg style="vertical-align: middle; margin-right: 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Anas Khan | 
+        <svg style="vertical-align: middle; margin: 0 5px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> anas.devops@hotmail.com | 
+        <svg style="vertical-align: middle; margin: 0 5px;" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg> devanaskhanops
+    </div>
+
+</div>
+
+</body>
+</html>
