@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 3: Namespaces, Labels, Annotations</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #fcf9f2;
+            color: #333;
+            margin: 0;
+            padding: 40px;
+            line-height: 1.8;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden; /* Added to keep the main container clean */
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            border-bottom: 2px solid #8fc1e3;
+            padding-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        h2 {
+            color: #4a6fa5;
+            margin-top: 40px;
+            position: relative;
+            z-index: 1;
+        }
+        .analogy {
+            font-style: italic;
+            font-size: 1.2em;
+            color: #555;
+            border-left: 4px solid #f29c9f;
+            padding-left: 20px;
+            margin: 20px 0;
+            position: relative;
+            z-index: 1;
+        }
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+        ul, ol {
+            color: #444;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .badge {
+            display: inline-block;
+            background-color: #e0f7fa;
+            color: #006064;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* --- PURE HTML/CSS DIAGRAM --- */
+        .html-diagram {
+            width: 100%;
+            height: 600px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
+            margin: 30px 0;
+            position: relative;
+            /* DO NOT use overflow: hidden here, so sticky notes don't get cut off if they touch the edge */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Logical boundaries for Namespaces */
+        .namespace-box {
+            position: absolute;
+            border-radius: 10px;
+            border: 2px dashed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 1;
+        }
+        .ns-dev {
+            right: 5%; top: 5%; width: 45%; height: 40%;
+            border-color: #94a3b8; background: rgba(148, 163, 184, 0.05);
+        }
+        .ns-prod {
+            right: 5%; top: 50%; width: 45%; height: 40%;
+            border-color: #10b981; background: rgba(16, 185, 129, 0.05);
+        }
+        .ns-title {
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+            background: #fff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .diagram-node {
+            position: absolute;
+            background: #ffffff;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 13px;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .diagram-node img {
+            display: block;
+            object-fit: contain;
+        }
+
+        /* Node Placements using Percentages for responsiveness */
+        .node-service { left: 20%; top: 45%; transform: translate(-50%, -50%); border-left: 5px solid #326CE5;}
+        
+        .node-pod-dev { right: 15%; top: 25%; transform: translate(50%, -50%); border-left: 5px solid #94a3b8; width: 120px;}
+        .node-pod-prod { right: 15%; top: 70%; transform: translate(50%, -50%); border-left: 5px solid #10b981; width: 120px;}
+
+        /* Labels (Sticky Notes) */
+        .label-sticky {
+            position: absolute;
+            top: -20px;
+            right: -10px;
+            background: #fef08a;
+            color: #854d0e;
+            padding: 5px 10px;
+            font-size: 11px;
+            border-radius: 3px;
+            border: 1px solid #fde047;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            transform: rotate(4deg);
+            z-index: 10;
+            font-family: 'Courier New', monospace;
+            white-space: nowrap;
+        }
+        
+        /* Annotations (Manuals) */
+        .annotation-note {
+            position: absolute;
+            top: 50%;
+            left: -110px;
+            background: #e2e8f0;
+            color: #334155;
+            padding: 5px 10px;
+            font-size: 10px;
+            border-radius: 3px;
+            border: 1px solid #cbd5e1;
+            box-shadow: -2px 2px 5px rgba(0,0,0,0.1);
+            transform: translateY(-50%) rotate(-3deg);
+            z-index: 10;
+            font-family: 'Courier New', monospace;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .flow-line {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .connection-active {
+            stroke: #10b981;
+            stroke-width: 0.8;
+            stroke-dasharray: 2;
+            fill: none;
+            animation: dash 10s linear infinite;
+        }
+        .connection-ignored {
+            stroke: #cbd5e1;
+            stroke-width: 0.5;
+            stroke-dasharray: 1;
+            fill: none;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: -100; }
+        }
+
+        /* Flow Texts */
+        .flow-text {
+            position: absolute;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            background: #fff;
+            padding: 5px 10px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            z-index: 50; /* Ensuring it NEVER goes behind any other element */
+        }
+        .text-dev-flow {
+            left: 45%; top: 37%;
+            color: #94a3b8;
+            transform: translate(-50%, -50%);
+        }
+        .text-prod-flow {
+            left: 45%; top: 55%;
+            color: #10b981;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .info-text {
+            width: 100%;
+            text-align: center;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px;
+            color: #475569;
+            background: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin: 20px 0;
+            box-sizing: border-box;
+        }
+
+        .error-section {
+            background-color: #fff0f0;
+            border-left: 4px solid #ff7b7b;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        .best-practice {
+            background-color: #f0fdf4;
+            border-left: 4px solid #6ee7b7;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        .footer-signature {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #555;
+            font-size: 1.1em;
+            position: relative;
+            z-index: 1;
+            flex-wrap: wrap;
+        }
+        .signature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="badge">Module 3</div>
+    <h1>Namespaces, Labels, Annotations</h1>
+    
+    <div class="content">
+        <p>Jab ek hi Kubernetes cluster par boht si applications chalti hain, toh unhein organize aur alag (isolate) karna zaroori hota hai. Yeh module sikhata hai ke resources ko logical hisson mein kaise banta jaye aur unhein kaise dhoonda (select kiya) jaye.</p>
+
+        <!-- HTML/CSS EXPLANATORY ANIMATED DIAGRAM -->
+        <div class="html-diagram">
+            
+            <!-- Dev Namespace Box -->
+            <div class="namespace-box ns-dev">
+                <div class="ns-title" style="color: #64748b;">DEV Namespace (Testing Room)</div>
+            </div>
+
+            <!-- Prod Namespace Box -->
+            <div class="namespace-box ns-prod">
+                <div class="ns-title" style="color: #10b981;">PROD Namespace (Live Room)</div>
+            </div>
+
+            <!-- Responsive Connection Lines -->
+            <svg class="flow-line" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <!-- Line from Service (20, 45) to Dev Pod (85, 25) -->
+                <path class="connection-ignored" d="M 20 45 L 85 25" />
+                <!-- Line from Service (20, 45) to Prod Pod (85, 70) -->
+                <path class="connection-active" d="M 20 45 L 85 70" />
+            </svg>
+
+            <!-- Flow Explanation Texts -->
+            <div class="flow-text text-dev-flow">
+                ❌ Ignored (Label Mismatch)
+            </div>
+            <div class="flow-text text-prod-flow">
+                ✅ Traffic Flowing (Label Matched!)
+            </div>
+
+            <!-- Service (Selector) -->
+            <div class="diagram-node node-service">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg" alt="Kubernetes Logo" width="60" style="height: auto;">
+                <div>
+                    <strong>Service</strong><br>
+                    <small style="color: #666;">I am searching for Pods<br>with Label: <b>env=prod</b></small>
+                </div>
+            </div>
+
+            <!-- Dev Pod -->
+            <div class="diagram-node node-pod-dev">
+                <div class="label-sticky">env: dev</div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Docker_%28container_engine%29_logo.svg" alt="Docker Logo" width="60" style="height: auto;">
+                <div>
+                    App Pod<br>
+                    <small style="color: #666;">(Dev Code)</small>
+                </div>
+            </div>
+
+            <!-- Prod Pod -->
+            <div class="diagram-node node-pod-prod">
+                <div class="label-sticky">env: prod</div>
+                <div class="annotation-note">build: v1.4<br>owner: anas</div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Docker_%28container_engine%29_logo.svg" alt="Docker Logo" width="60" style="height: auto;">
+                <div>
+                    App Pod<br>
+                    <small style="color: #666;">(Live Code)</small>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Bottom Informational Text (Moved outside diagram) -->
+        <div class="info-text">
+            <strong>Concept:</strong> Dev aur Prod ke Pods ek doosre ko dekh nahi sakte. Labels (yellow notes) Kubernetes ko identity batate hain, jabke Annotations (grey notes) insano ke liye extra information hoti hain.
+        </div>
+        
+        <p style="text-align: center; font-size: 0.9em; color: #555;"><i>Upar di gayi animation mein dekhein: Service sirf usi Pod ko apna traffic (green moving line) bhej rahi hai jiska Label <code>env=prod</code> match ho raha hai. Doosre Pod ko ignore kar diya gaya.</i></p>
+
+        <div class="analogy">
+            <strong>Analogy:</strong><br>
+            - <strong>Namespace:</strong> Ek ghar mein alag alag kamre (jaise Dev room aur Prod room). Dono kamron mein same naam ki cheezein ho sakti hain.<br>
+            - <strong>Labels:</strong> Items par lagi "Sticky Notes" jinki madad se hum cheezon ko filter karte hain (e.g., "Find all boxes where env=prod").<br>
+            - <strong>Annotations:</strong> Item ke sath lagi hui "Instruction Manual" jisme bari bari details likhi hoti hain jo sirf insano ko padhne ke liye hoti hain.
+        </div>
+
+        <h2>Hum Kya Seekhenge (Concepts)</h2>
+        <ul>
+            <li><strong>Namespaces:</strong> Resources ko logical groups mein taqseem (divide) karna taake testing aur live environment apas mein takrayen na.</li>
+            <li><strong>Labels:</strong> Chotay tags (jaise <code>app=backend</code>) jo Kubernetes use karta hai yeh pehchanne pehchanne ke liye ke konsa traffic kis Pod ko bhejna hai.</li>
+            <li><strong>Annotations:</strong> Lambi details jo tools ya humans padhte hain magar Kubernetes unse filtering nahi karta.</li>
+        </ul>
+
+        <h2>Hands-on Steps</h2>
+        <ol>
+            <li>Do naye namespaces banayein: <code>kubectl create namespace dev</code> aur <code>kubectl create namespace prod</code>.</li>
+            <li>Ek Pod <code>dev</code> namespace mein deploy karein aur uspar label lagayen: <code>env=dev</code>.</li>
+            <li><code>kubectl get pods -n dev -l env=dev</code> command chala kar specific labeled pod ko dhoond kar dekhein.</li>
+            <li>Pod ko describe karke uski annotations aur labels verify karein.</li>
+        </ol>
+
+        <div class="error-section">
+            <h3>Errors (Jo hum break karke fix karenge)</h3>
+            <p>Hum jaan boojh kar in issues ko create aur fix karenge:</p>
+            <ul>
+                <li><strong>Querying Wrong Namespace:</strong> Jab aap ghalat kamre (namespace) mein pod dhoondte hain toh <em>"No resources found"</em> ka error aata hai.</li>
+                <li><strong>Typo in Labels:</strong> Agar Service ka selector aur Pod ka label match na karein (jaise animation mein <code>dev</code> pod ke sath hua), toh connection nahi banta.</li>
+            </ul>
+        </div>
+
+        <div class="best-practice">
+            <h3>Best Practices</h3>
+            <ul>
+                <li>Hamesha custom namespaces banayen, <code>default</code> namespace mein production workloads kabhi mat rakhein.</li>
+                <li>Ek standard labeling scheme follow karein (jaise <code>app.kubernetes.io/name</code>) taake future mein asani ho.</li>
+            </ul>
+        </div>
+
+        <h2>Done-Check</h2>
+        <p>Yeh module tab complete hoga jab aap safely <code>dev</code> aur <code>prod</code> namespaces mein pods deploy kar lein aur unhein labels ke zariye asani se filter kar sakein.</p>
+    </div>
+
+    <div class="footer-signature">
+        <div class="signature-item">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="#555">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+            </svg>
+            <strong>Anas Khan</strong>
+        </div>
+        <div class="signature-item">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="#555">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            anas.devops@hotmail.com
+        </div>
+        <div class="signature-item">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="#0077b5">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+            devanaskhanops
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
